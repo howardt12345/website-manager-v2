@@ -1,17 +1,21 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
-import { LoginPage, MainPage, PortfolioPage, MessagesPage, UnauthPage } from '@pages';
+import { Router } from "@reach/router";
+import { LoginPage, MainPage, MessagesPage, PortfolioPage, UnauthPage } from '@pages';
 
-export default function Routes() {
+function Routes() {
+  const user = null;
   return (
-    <Switch>
-      <Route path="/" exact component={LoginPage} />
-      <Route path="/unauth" component={UnauthPage} />
-      <Route path="/main" component={MainPage} isPrivate />
-      <Route path="/portfolio" component={PortfolioPage} isPrivate />
-      <Route path="/messages" component={MessagesPage} isPrivate />
-      {/* redirect user to SignIn page if route does not exist and user is not authenticated */}
-      <Route component={LoginPage} />
-    </Switch>
+    user
+    ? <Router>
+      <MainPage path='/'/>
+      <MessagesPage path='messages'/>
+      <PortfolioPage path='portfolio'/>
+      <UnauthPage path='unauth' />
+    </Router>
+    : <Router>
+      <LoginPage path='/' />
+    </Router>
   );
 }
+
+export default Routes;

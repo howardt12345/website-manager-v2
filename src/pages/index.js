@@ -1,6 +1,6 @@
 
-export { LoginPage } from './login';
-export { MainPage } from './main';
-export { PortfolioPage } from './portfolio';
-export { MessagesPage } from './messages';
-export { UnauthPage } from './unauth';
+export { default as LoginPage } from './login';
+export { default as MainPage } from './main';
+export { default as PortfolioPage } from './portfolio';
+export { default as MessagesPage } from './messages';
+export { default as UnauthPage } from './unauth';

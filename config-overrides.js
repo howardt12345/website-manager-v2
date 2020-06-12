@@ -5,6 +5,7 @@ module.exports = function override(config) {
   alias({
     '@api': 'src/api',
     '@components': 'src/components',
+    '@firebase-api': 'src/firebase',
     '@pages': 'src/pages',
     '@routes': 'src/routes',
     '@styles': 'src/styles',
