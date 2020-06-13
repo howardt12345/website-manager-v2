@@ -6,6 +6,7 @@ module.exports = function override(config) {
     '@api': 'src/api',
     '@components': 'src/components',
     '@firebase-api': 'src/firebase',
+    '@fonts': 'src/fonts',
     '@pages': 'src/pages',
     '@routes': 'src/routes',
     '@styles': 'src/styles',

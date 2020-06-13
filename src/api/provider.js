@@ -1,5 +1,6 @@
 import React, { Component, createContext } from "react";
 import { auth } from "@firebase-api";
+import { GlobalStyle } from '@styles';
 
 
 export const UserContext = createContext({ user: null });
@@ -23,6 +24,7 @@ class UserProvider extends Component {
 
     return (
       <UserContext.Provider value={user}>
+        <GlobalStyle />
         {this.props.children}
       </UserContext.Provider>
     );
