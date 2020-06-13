@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Router } from "@reach/router";
 import { LoginPage, MainPage, MessagesPage, PortfolioPage, UnauthPage } from '@pages';
+import { UserContext } from '@api';
 
 function Routes() {
-  const user = null;
+  const user = useContext(UserContext);
   return (
     user
     ? <Router>

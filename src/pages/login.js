@@ -1,19 +1,24 @@
-import React from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
-import { signInWithGoogle } from '@firebase-api'
+import { auth } from '@firebase-api'
 
 const SigninButton = styled.button`
 
 `;
 
  
-const LoginPage = () => {
-  return (
-    <div>
-      <h1>Login Page</h1>
-      <SigninButton onClick={signInWithGoogle}>Sign In</SigninButton>
-    </div>
-  );
+class LoginPage extends Component {
+
+  render() {
+    return (
+      <div>
+        <h1>Login Page</h1>
+        <SigninButton onClick={event => {
+          auth.signInWithEmailAndPassword('aaa', 'aaa')
+        }}>Sign In</SigninButton>
+      </div>
+    );
+  }
 }
  
 export default LoginPage;
