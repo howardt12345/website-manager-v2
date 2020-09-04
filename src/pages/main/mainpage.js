@@ -5,9 +5,11 @@ import {
   Box,
   Button,
   Grid,
+  IconButton,
   Link,
   Typography
 } from '@material-ui/core';
+import { Brightness7, Brightness3 } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core/styles';
 const _ = require('lodash');
 
@@ -47,7 +49,10 @@ const useStyles = makeStyles((theme) => ({
     bottom: theme.spacing(2),
     left: '0',
     right: '0',
-  }
+  },
+  toggleButton: {
+    marginBottom: theme.spacing(1),
+  },
 }));
 
 class MainPage extends Component {
@@ -97,16 +102,13 @@ class MainPage extends Component {
         <Box className={classes.bottom}>
           <ThemeToggleConsumer>
             {themeContext => (
-              <Button 
-                variant="outlined" 
-                color="primary" 
-                className={classes.button}
-                onClick={() => {
-                  themeContext.toggleTheme();
-                }}
+              <IconButton 
+                className={classes.toggleButton} 
+                color ='inherit'
+                onClick={themeContext.toggleTheme}
               >
-                Toggle Theme
-              </Button>
+                {themeContext.dark ? <Brightness3 /> : <Brightness7 />}
+              </IconButton>
             )}
           </ThemeToggleConsumer>
           <Button 
