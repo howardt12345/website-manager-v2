@@ -32,12 +32,12 @@ class MainAppBar extends Component {
           <AppBar position='fixed' color='default' elevation={0}>
             <Toolbar>
               <IconButton 
-              edge="start" 
-              className={classes.menuButton} 
-              color="inherit" 
-              onClick={() => {
-                maincontext.setPage('index');
-              }} 
+                edge="start" 
+                className={classes.menuButton} 
+                color="inherit" 
+                onClick={() => {
+                  maincontext.setPage('index');
+                }} 
               >
                 <ArrowBack />
               </IconButton>
@@ -45,11 +45,11 @@ class MainAppBar extends Component {
                 <Grid item>
                   <Typography>
                     <Link 
-                    href="#" 
-                    onClick={() => {
-                      maincontext.setPage('portfolio');
-                    }} 
-                    color="inherit"
+                      href="#" 
+                      onClick={() => {
+                        maincontext.setPage('portfolio');
+                      }} 
+                      color="inherit"
                     >
                       Portfolio
                     </Link>
@@ -58,11 +58,11 @@ class MainAppBar extends Component {
                 <Grid item>
                   <Typography>
                     <Link 
-                    href="#" 
-                    onClick={() => {
-                      maincontext.setPage('messages');
-                    }} 
-                    color="inherit"
+                      href="#" 
+                      onClick={() => {
+                        maincontext.setPage('messages');
+                      }} 
+                      color="inherit"
                     >
                       Messages
                     </Link>

@@ -75,22 +75,22 @@ class MainPage extends Component {
               <Grid container className={classes.nav} spacing={6}>
                 <Grid item>
                   <Link 
-                  href="#" 
-                  onClick={() => {
-                    maincontext.setPage('portfolio');
-                  }} 
-                  color="inherit"
+                    href="#" 
+                    onClick={() => {
+                      maincontext.setPage('portfolio');
+                    }} 
+                    color="inherit"
                   >
                     Portfolio
                   </Link>
                 </Grid>
                 <Grid item>
                   <Link 
-                  href="#" 
-                  onClick={() => {
-                    maincontext.setPage('messages');
-                  }} 
-                  color="inherit"
+                    href="#" 
+                    onClick={() => {
+                      maincontext.setPage('messages');
+                    }} 
+                    color="inherit"
                   >
                     Messages
                   </Link>
