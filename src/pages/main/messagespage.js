@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
-import { theme } from '@styles';
-import { MainContext } from '@api';
+import React, { Component, Fragment } from 'react';
+import { MainAppBar } from '@components'
 import { 
   Box,
   Button,
@@ -11,65 +10,32 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 const _ = require('lodash');
 
-
 const useStyles = makeStyles((theme) => ({
   paper: {
+    component: 'div',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: "center",
-  },
-  nav: {
-    justifyContent: 'center',
-    marginTop: theme.spacing(1),
-  },
-  button: {
-    marginBottom: theme.spacing(1),
+    overflow: 'hidden',
+    minHeight: '95vh',
   },
 }));
 
 class MessagesPage extends Component {
 
-  static contextType = MainContext;
-
   render() {
     const classes = this.props.classes;
 
-    const { setPage } = this.context
-
     return (
-      <Box className={classes.paper}>
+      <Fragment>
+        <MainAppBar />
+        <Box className={classes.paper}>
           <Typography component="h1" variant="h2">
             Messages Page
           </Typography>
-          <a href={'https://howardt12345.com'} target='_blank' rel="noopener noreferrer">
-            howardt12345.com
-          </a>
-          <Grid container className={classes.nav} spacing={6}>
-          <Grid item>
-            <Link 
-            href="#" 
-            onClick={() => {
-              setPage('portfolio');
-            }} 
-            color="inherit"
-            >
-              Portfolio
-            </Link>
-          </Grid>
-          <Grid item>
-            <Link 
-            href="#" 
-            onClick={() => {
-              setPage('index');
-            }} 
-            color="inherit"
-            >
-              Main
-            </Link>
-          </Grid>
-        </Grid>
-      </Box>
+        </Box>
+      </Fragment>
     );
   }
 }

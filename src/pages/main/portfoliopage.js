@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { MainAppBar } from '@components'
 import { 
   Box,
@@ -12,10 +12,13 @@ const _ = require('lodash');
 
 const useStyles = makeStyles((theme) => ({
   paper: {
+    component: 'div',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: "center",
+    overflow: 'hidden',
+    minHeight: '95vh',
   },
 }));
 
@@ -25,12 +28,14 @@ class PortfolioPage extends Component {
     const classes = this.props.classes;
 
     return (
-      <Box className={classes.paper}>
+      <Fragment>
         <MainAppBar />
-        <Typography component="h1" variant="h2">
-          Portfolio Page
-        </Typography>
-      </Box>
+        <Box className={classes.paper}>
+          <Typography component="h1" variant="h2">
+            Portfolio Page
+          </Typography>
+        </Box>
+      </Fragment>
     );
   }
 }
