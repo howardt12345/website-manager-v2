@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
     minHeight: '95vh',
   },
   button: {
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(2),
   },
   bottom: {
     display: 'flex',
