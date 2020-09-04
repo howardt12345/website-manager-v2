@@ -35,18 +35,39 @@ export const signOut = async () => {
   return error;
 }
 
-export const uploadFile = async (file, id, ext, hash, api, apiList) => {
+export const getMessages = async () => {
+  let messages = [];
 
-}
+  await firestore
+  .collection('messages')
+  .get()
+  .then(async snapshot => {
+    snapshot.docs.forEach(doc => {
+      if(doc.id !== '0') {
+        var Message = class {
+          constructor(data, id) {
+            this.archived = data.archived;
+            this.body = data.body;
+            this.date = data.date;
+            this.email = data.email;
+            this.name = data.name;
+            this.read = data.read;
+            this.replied = data.replied;
+            this.subject = data.subject;
+            this.id = id;
+          }
 
-const upload = async (props, apiList) => {
+          reply = async () => {
+            window.open(encodeURI(`mailto:${this.email}?subject=RE: ${this.subject}&body=${this.body}`), '_blank');
+            firestore.collection('messages').doc(this.id).update({
+              replied: true
+            });
+          }
+        }
+        messages.push(new Message(doc.data(), doc.id));
+      }
+    })
+  });
 
-}
-
-export const deleteFile = async (id, ext, hash, api, apiList) => {
-  
-}
-
-export const tinyccApi = async () => {
-  
+  return messages;
 }
