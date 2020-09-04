@@ -15,12 +15,12 @@ export const lightTheme = createMuiTheme({
     },
     background: {
       default: colors_light.background,
+      paper: colors_light.background,
     },
-  },
-  typography: {
-    allVariants: {
-      color: colors_light.textPrimary,
-    }
+    text: {
+      primary: colors_light.textPrimary,
+      secondary: colors_light.textSecondary,
+    },
   },
 });
 
@@ -32,12 +32,12 @@ export const darkTheme = createMuiTheme({
     },
     background: {
       default: colors_dark.background,
+      paper: colors_dark.background,
     },
-  },
-  typography: {
-    allVariants: {
-      color: colors_dark.textPrimary
-    }
+    text: {
+      primary: colors_dark.textPrimary,
+      secondary: colors_dark.textSecondary,
+    },
   },
 });
 

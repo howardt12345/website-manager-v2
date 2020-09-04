@@ -5,7 +5,7 @@ const ACCENT_dark = '#64ffda';
 const DARK_BG = '#EAEAEA';
 const DARK_BG_dark = '#151515';
 const BG = '#FFFFFF';
-const BG_dark = '#000000';
+const BG_dark = '#0c0c0c';
 
 export const colors_light = {
   background: BG,

@@ -6,6 +6,7 @@ import {
   IconButton,
   Link,
   Toolbar,
+  Typography,
 } from '@material-ui/core';
 import { Menu } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core/styles';
@@ -26,7 +27,7 @@ class MainAppBar extends Component {
 
     return (
       <div height='56px'>
-        <AppBar position='fixed'>
+        <AppBar position='fixed' color='default'>
           <Toolbar>
             <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
               <Menu />
@@ -35,26 +36,30 @@ class MainAppBar extends Component {
               {maincontext => (
                 <Grid container className={classes.nav} spacing={6}>
                   <Grid item>
-                    <Link 
-                    href="#" 
-                    onClick={() => {
-                      maincontext.setPage('portfolio');
-                    }} 
-                    color="inherit"
-                    >
-                      Portfolio
-                    </Link>
+                    <Typography>
+                      <Link 
+                      href="#" 
+                      onClick={() => {
+                        maincontext.setPage('portfolio');
+                      }} 
+                      color="inherit"
+                      >
+                        Portfolio
+                      </Link>
+                    </Typography>
                   </Grid>
                   <Grid item>
-                    <Link 
-                    href="#" 
-                    onClick={() => {
-                      maincontext.setPage('messages');
-                    }} 
-                    color="inherit"
-                    >
-                      Messages
-                    </Link>
+                    <Typography>
+                      <Link 
+                      href="#" 
+                      onClick={() => {
+                        maincontext.setPage('messages');
+                      }} 
+                      color="inherit"
+                      >
+                        Messages
+                      </Link>
+                    </Typography>
                   </Grid>
                 </Grid>
               )}
