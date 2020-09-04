@@ -2,12 +2,14 @@ import React from 'react';
 import { MainConsumer, ThemeToggleConsumer } from '@api';
 import { MainPage, PortfolioPage, MessagesPage } from '@pages/main'
 import { ThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from "@material-ui/core/CssBaseline";
 
 function MainRoutes() {
   return (
     <ThemeToggleConsumer>
       {themeContext => (
         <ThemeProvider theme={themeContext.theme}>
+          <CssBaseline />
           <MainConsumer>
             {context => {
               switch(context.page) {

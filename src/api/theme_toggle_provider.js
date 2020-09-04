@@ -1,7 +1,7 @@
 import React, { Component, createContext } from 'react';
 import { createMuiTheme } from '@material-ui/core/styles';
-import { colors_light, colors_dark, GlobalStyle } from '@styles';
-
+import { colors_light, colors_dark } from '@styles';
+import CssBaseline from "@material-ui/core/CssBaseline";
 
 const ThemeToggleContext = createContext();
 const { Provider, Consumer } = ThemeToggleContext;
@@ -11,12 +11,15 @@ export const lightTheme = createMuiTheme({
   palette: {
     type: 'light',
     primary: {
-      main: colors_light.accent
+      main: colors_light.accent,
+    },
+    background: {
+      default: colors_light.background,
     },
   },
   typography: {
     allVariants: {
-      color: colors_light.textPrimary
+      color: colors_light.textPrimary,
     }
   },
 });
@@ -26,6 +29,9 @@ export const darkTheme = createMuiTheme({
     type: 'dark',
     primary: {
       main: colors_dark.accent,
+    },
+    background: {
+      default: colors_dark.background,
     },
   },
   typography: {

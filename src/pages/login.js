@@ -5,6 +5,7 @@ import { ThemeToggleConsumer } from '@api';
 import { 
   Box,
   Button,
+  CssBaseline,
   Link,
   Typography
 } from '@material-ui/core';
@@ -54,6 +55,7 @@ class LoginPage extends Component {
       <ThemeToggleConsumer>
         {themeContext => (
           <ThemeProvider theme={themeContext.theme}>
+            <CssBaseline />
             <Box className={classes.paper}>
               <Typography component="h1" variant="h2">
                 Website Manager
