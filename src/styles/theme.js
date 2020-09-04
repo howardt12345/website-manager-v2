@@ -7,7 +7,7 @@ const DARK_BG_dark = '#151515';
 const BG = '#FFFFFF';
 const BG_dark = '#000000';
 
-const colors_light = {
+export const colors_light = {
   background: BG,
   background_secondary: DARK_BG,
   accent: ACCENT,
@@ -18,7 +18,7 @@ const colors_light = {
   shadow_bg: hex2rgba(DARK_BG, 0.7),
 };
 
-const colors_dark = {
+export const colors_dark = {
   background: BG_dark,
   background_secondary: DARK_BG_dark,
   accent: ACCENT_dark,

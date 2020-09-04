@@ -1,12 +1,14 @@
 import React from "react";
 import Routes from "@routes";
-import { UserProvider } from "@api";
+import { UserProvider, ThemeToggleProvider } from "@api";
 
 function App() {
   return (
-    <UserProvider>
-      <Routes />
-    </UserProvider>
+    <ThemeToggleProvider>
+      <UserProvider>
+        <Routes />
+      </UserProvider>
+    </ThemeToggleProvider>
   );
 }
 

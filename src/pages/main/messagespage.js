@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { signOut } from '@firebase-api'
 import { theme } from '@styles';
-import { email, pass } from '@vars';
+import { MainContext } from '@api';
 import { 
   Box,
   Button,
+  Grid,
+  Link,
   Typography
 } from '@material-ui/core';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -12,7 +13,6 @@ import { makeStyles } from '@material-ui/core/styles';
 const _ = require('lodash');
 
 const { colors, } = theme;
-
 
 const muitheme = createMuiTheme({
   palette: {
@@ -22,16 +22,6 @@ const muitheme = createMuiTheme({
   },
 });
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © Howard Tseng '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
 const useStyles = makeStyles((theme) => ({
   paper: {
     display: 'flex',
@@ -39,45 +29,57 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: "center",
   },
+  nav: {
+    justifyContent: 'center',
+    marginTop: theme.spacing(1),
+  },
   button: {
     marginBottom: theme.spacing(1),
-    marginLeft: 'auto',
-    marginRight: 'auto',
   },
-  bottom: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: "center",
-    marginBottom: theme.spacing(2),
-  }
 }));
 
-class MainPage extends Component {
+class MessagesPage extends Component {
+
+  static contextType = MainContext;
+
   render() {
     const classes = this.props.classes;
+
+    const { setPage } = this.context
+
     return (
       <ThemeProvider theme={muitheme}>
         <Box className={classes.paper}>
           <Typography component="h1" variant="h2">
-            Website Manager
+            Messages Page
           </Typography>
           <a href={'https://howardt12345.com'} target='_blank' rel="noopener noreferrer">
             howardt12345.com
           </a>
-        </Box>
-        <Box className={classes.bottom}>
-          <Button 
-            variant="outlined" 
-            color="secondary" 
-            className={classes.button}
-            onClick={async () => {
-              await signOut();
-            }}
-          >
-            Sign Out
-          </Button>
-          <Copyright />
+          <Grid container className={classes.nav} spacing={6}>
+          <Grid item>
+            <Link 
+            href="#" 
+            onClick={() => {
+              setPage('portfolio');
+            }} 
+            color="inherit"
+            >
+              Portfolio
+            </Link>
+          </Grid>
+          <Grid item>
+            <Link 
+            href="#" 
+            onClick={() => {
+              setPage('index');
+            }} 
+            color="inherit"
+            >
+              Main
+            </Link>
+          </Grid>
+        </Grid>
         </Box>
       </ThemeProvider>
     );
@@ -87,6 +89,6 @@ class MainPage extends Component {
 export default () => {
   const classes = useStyles();
   return (
-    <MainPage classes={classes} />
+    <MessagesPage classes={classes} />
   )
 }
