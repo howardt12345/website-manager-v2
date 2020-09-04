@@ -1,13 +1,10 @@
-const electron = require('electron');
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
+
+const { app, shell, BrowserWindow, globalShortcut } = require('electron');
 
 const path = require('path');
 const isDev = require('electron-is-dev');
 
 let mainWindow;
-
-const globalShortcut = electron.globalShortcut
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -18,17 +15,24 @@ function createWindow() {
   mainWindow.on('closed', () => mainWindow = null);
   mainWindow.removeMenu();
 
-  if(isDev) {
-    mainWindow.webContents.openDevTools();
-  }
+  mainWindow.webContents.on("new-window", function(event, url) {
+    event.preventDefault();
+    shell.openExternal(url);
+  });
 
   globalShortcut.register('f5', function() {
 		console.log('f5 is pressed')
-		mainWindow.reload()
+		mainWindow.reload();
 	})
 	globalShortcut.register('CommandOrControl+R', function() {
 		console.log('CommandOrControl+R is pressed')
-		mainWindow.reload()
+		mainWindow.reload();
+  })
+  globalShortcut.register('CommandOrControl+Shift+I', function() {
+		console.log('CommandOrControl+Shift+I is pressed')
+    if(isDev) {
+      mainWindow.webContents.openDevTools();
+    }
 	})
 }
 
