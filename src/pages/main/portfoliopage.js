@@ -29,7 +29,7 @@ class PortfolioPage extends Component {
 
     return (
       <Fragment>
-        <MainAppBar />
+        <MainAppBar page='portfolio'/>
         <Box className={classes.paper}>
           <Typography component="h1" variant="h2">
             Portfolio Page
