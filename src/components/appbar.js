@@ -29,7 +29,7 @@ class MainAppBar extends Component {
       <MainConsumer>
        {maincontext => (
         <div height='56px'>
-          <AppBar position='fixed' color='default'>
+          <AppBar position='fixed' color='default' elevation={0}>
             <Toolbar>
               <IconButton 
               edge="start" 
