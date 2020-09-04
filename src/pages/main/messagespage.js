@@ -8,19 +8,9 @@ import {
   Link,
   Typography
 } from '@material-ui/core';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 const _ = require('lodash');
 
-const { colors, } = theme;
-
-const muitheme = createMuiTheme({
-  palette: {
-    primary: {
-      main: colors.accent
-    },
-  },
-});
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -48,8 +38,7 @@ class MessagesPage extends Component {
     const { setPage } = this.context
 
     return (
-      <ThemeProvider theme={muitheme}>
-        <Box className={classes.paper}>
+      <Box className={classes.paper}>
           <Typography component="h1" variant="h2">
             Messages Page
           </Typography>
@@ -80,8 +69,7 @@ class MessagesPage extends Component {
             </Link>
           </Grid>
         </Grid>
-        </Box>
-      </ThemeProvider>
+      </Box>
     );
   }
 }
