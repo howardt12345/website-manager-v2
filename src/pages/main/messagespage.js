@@ -23,6 +23,7 @@ import {
   Archive, 
   Check,
   Delete, 
+  Markunread,
   Search, 
   Refresh, 
   Reply,
@@ -113,9 +114,6 @@ const useStyles = makeStyles((theme) => ({
   iconButton: {
     margin: theme.spacing(0, 1),
   },
-  tabs: {
-    padding: theme.spacing(0, 0),
-  }
 }));
 
 const TooltipDiv = props => {
@@ -174,17 +172,34 @@ class MessagesPage extends Component {
       messages: messages
     });
   }
+  
+  updateList = (index) => {
+    switch(index) {
+      case 0:
+        this.needsAction();
+        break;
+      case 1:
+        this.replied();
+        break;
+      case 2:
+        this.archived();
+        break;
+      default:
+        this.needsAction();
+        break;
+    }
+  }
 
-  allMessages = () => {
+  needsAction = () => {
     this.setState({
-      messages: this.state.allMessages,
+      messages: this.state.allMessages.filter(message => !message.replied).filter(message => !message.archived),
       index: -1,
     });
   }
 
-  notReplied = () => {
+  replied = () => {
     this.setState({
-      messages: this.state.allMessages.filter(message => !message.replied),
+      messages: this.state.allMessages.filter(message => message.replied),
       index: -1,
     });
   }
@@ -223,14 +238,19 @@ class MessagesPage extends Component {
             </Typography>
           </Box>
           <Box flexDirection='row'>
-            <Tooltip title="Reply">
+            <Tooltip title={message.replied ? "Mark Unread" : 'Reply'}>
               <IconButton 
                 className={classes.iconButton}
                 onClick={() => {
-                  message.reply();
+                  if (message.replied) {
+                    message.markUnread();
+                  } else {
+                    message.reply();
+                  }
+                  this.updateList(this.state.tab);
                 }}
               >
-                <Reply />
+                {message.replied ? <Markunread /> : <Reply />}
               </IconButton>
             </Tooltip>
             <Tooltip title={message.archived ? 'Unarchive' : 'Archive'}>
@@ -238,7 +258,7 @@ class MessagesPage extends Component {
                 className={classes.iconButton}
                 onClick={() => {
                   message.toggleArchive();
-                  this.setState({});
+                  this.updateList(this.state.tab);
                 }}
               >
                 {message.archived ? <Unarchive /> : <Archive />}
@@ -248,6 +268,7 @@ class MessagesPage extends Component {
               <IconButton 
                 className={classes.iconButton}
                 onClick={() => {
+                  this.updateList(this.state.tab);
                   
                 }}
               >
@@ -356,31 +377,17 @@ class MessagesPage extends Component {
                   <div>
                     <Tabs
                       aria-label="message list"
-                      className={classes.tabs}
                       variant="standard"
                       value={this.state.tab}
                       indicatorColor="primary"
                       onChange={(event, index) => {
                         this.setState({ tab: index });
-                        switch(index) {
-                          case 0:
-                            this.allMessages();
-                            break;
-                          case 1:
-                            this.notReplied();
-                            break;
-                          case 2:
-                            this.archived();
-                            break;
-                          default:
-                            this.allMessages();
-                            break;
-                        }
+                        this.updateList(index);
                       }}
                     >
-                      <Tab label="All" {...a11yProps(0)} style={{minWidth:"25%"}}/>
-                      <Tab label="Not Replied" {...a11yProps(1)} style={{minWidth:"40%"}}/>
-                      <Tab label="Archived" {...a11yProps(2)} style={{minWidth:"35%"}}/>
+                      <Tab label="Needs Action" {...a11yProps(0)} style={{minWidth:"40%"}}/>
+                      <Tab label="Replied" {...a11yProps(1)} style={{minWidth:"30%"}}/>
+                      <Tab label="Archived" {...a11yProps(2)} style={{minWidth:"30%"}}/>
                     </Tabs>
                   </div>
                 </ListItemText>
