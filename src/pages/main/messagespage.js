@@ -1,31 +1,32 @@
 import React, { Component, useRef, useState, useEffect } from 'react';
 import { MainAppBar } from '@components'
 import { getMessages } from '@firebase-api';
+import { MainConsumer } from '@api';
 import { 
-  AppBar,
   Box,
-  Button,
   CssBaseline,
   Drawer,
   Divider,
-  Grid,
   IconButton,
   InputBase,
-  Link,
   List,
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
+  Tabs,
+  Tab,
   Toolbar,
   Tooltip,
   Typography
 } from '@material-ui/core';
 import { 
   Archive, 
+  Check,
   Delete, 
   Search, 
   Refresh, 
-  Reply 
+  Reply,
+  Unarchive,
 } from '@material-ui/icons/';
 import { fade, makeStyles } from '@material-ui/core/styles';
 const _ = require('lodash');
@@ -112,6 +113,9 @@ const useStyles = makeStyles((theme) => ({
   iconButton: {
     margin: theme.spacing(0, 1),
   },
+  tabs: {
+    padding: theme.spacing(0, 0),
+  }
 }));
 
 const TooltipDiv = props => {
@@ -141,6 +145,12 @@ const TooltipDiv = props => {
   );
 };
 
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    //'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
 
 class MessagesPage extends Component {
 
@@ -151,6 +161,7 @@ class MessagesPage extends Component {
       messages: [],
       index: -1,
       current: null,
+      tab: 0,
     };
     this.loadMessages();
   }
@@ -162,7 +173,27 @@ class MessagesPage extends Component {
       allMessages: messages,
       messages: messages
     });
-    console.log(messages);
+  }
+
+  allMessages = () => {
+    this.setState({
+      messages: this.state.allMessages,
+      index: -1,
+    });
+  }
+
+  notReplied = () => {
+    this.setState({
+      messages: this.state.allMessages.filter(message => !message.replied),
+      index: -1,
+    });
+  }
+
+  archived = () => {
+    this.setState({
+      messages: this.state.allMessages.filter(message => message.archived),
+      index: -1,
+    });
   }
 
   search = (query) => {
@@ -179,6 +210,7 @@ class MessagesPage extends Component {
 
   MessageContent = (props) => {
     const { message, classes } = props;
+    //TODO: Icon Button Functionality
     return (
       <div>
         <Box display="flex" flexDirection='row'>
@@ -191,15 +223,37 @@ class MessagesPage extends Component {
             </Typography>
           </Box>
           <Box flexDirection='row'>
-            <IconButton className={classes.iconButton}>
-              <Reply />
-            </IconButton>
-            <IconButton className={classes.iconButton}>
-              <Archive />
-            </IconButton>
-            <IconButton className={classes.iconButton}>
-              <Delete />
-            </IconButton>
+            <Tooltip title="Reply">
+              <IconButton 
+                className={classes.iconButton}
+                onClick={() => {
+                  message.reply();
+                }}
+              >
+                <Reply />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={message.archived ? 'Unarchive' : 'Archive'}>
+              <IconButton 
+                className={classes.iconButton}
+                onClick={() => {
+                  message.toggleArchive();
+                  this.setState({});
+                }}
+              >
+                {message.archived ? <Unarchive /> : <Archive />}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton 
+                className={classes.iconButton}
+                onClick={() => {
+                  
+                }}
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
           </Box>
         </Box>
         <Box m={2} />
@@ -218,20 +272,26 @@ class MessagesPage extends Component {
     const { message, index } = props;
     return (
       <ListItem 
+        key={message.id}
         button 
         selected={this.state.index === index}
         onClick={event => this.selectIndex(event, message, index)}
       >
         <ListItemText 
           primary={
-            <div>
-              <Typography variant='body2'>
-                {`${message.name} (${message.email})`}
-              </Typography>
-              <Typography variant='body2' noWrap>
-                <Box fontWeight={500}>{message.subject}</Box>
-              </Typography>
-            </div>
+            <Box display="flex" flexDirection='row'>
+              <Box flexGrow={1} justifyContent="flex-start">
+                <Typography variant='body2'>
+                  {`${message.name} (${message.email})`}
+                </Typography>
+                <Typography variant='body2' noWrap>
+                  <Box fontWeight={500}>{message.subject}</Box>
+                </Typography>
+              </Box>
+              <Box>
+                {message.replied ? <Check /> : <div />}
+              </Box>
+            </Box>
           }
           secondary={
             <TooltipDiv text={message.body} className={props.classes.listItem} />
@@ -290,6 +350,40 @@ class MessagesPage extends Component {
                     <Refresh />
                   </IconButton>
                 </ListItemSecondaryAction>
+              </ListItem>
+              <ListItem>
+                <ListItemText>
+                  <div>
+                    <Tabs
+                      aria-label="message list"
+                      className={classes.tabs}
+                      variant="standard"
+                      value={this.state.tab}
+                      indicatorColor="primary"
+                      onChange={(event, index) => {
+                        this.setState({ tab: index });
+                        switch(index) {
+                          case 0:
+                            this.allMessages();
+                            break;
+                          case 1:
+                            this.notReplied();
+                            break;
+                          case 2:
+                            this.archived();
+                            break;
+                          default:
+                            this.allMessages();
+                            break;
+                        }
+                      }}
+                    >
+                      <Tab label="All" {...a11yProps(0)} style={{minWidth:"25%"}}/>
+                      <Tab label="Not Replied" {...a11yProps(1)} style={{minWidth:"40%"}}/>
+                      <Tab label="Archived" {...a11yProps(2)} style={{minWidth:"35%"}}/>
+                    </Tabs>
+                  </div>
+                </ListItemText>
               </ListItem>
             </List>
             <Divider />
