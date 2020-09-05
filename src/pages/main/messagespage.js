@@ -202,7 +202,7 @@ class MessagesPage extends Component {
             </IconButton>
           </Box>
         </Box>
-        <Box m={1} />
+        <Box m={2} />
         <Typography variant='h5'>
           <Box>{message.subject}</Box>
         </Typography>
