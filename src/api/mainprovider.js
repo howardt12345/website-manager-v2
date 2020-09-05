@@ -7,7 +7,7 @@ const pages = ['index', 'portfolio', 'messages'];
 
 class MainProvider extends Component {
   state = {
-    page: 'index'
+    page: 'index',
   };
 
   setPage = (nextPage) => {
@@ -23,6 +23,7 @@ class MainProvider extends Component {
   render() {
     const { page } = this.state;
     const { setPage } = this;
+    
     return (
       <Provider value={{ page, setPage }}>
         {this.props.children}
