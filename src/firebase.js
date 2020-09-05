@@ -57,7 +57,15 @@ export const getMessages = async () => {
             this.id = id;
           }
 
+          toggleArchive = async () => {
+            this.archived = !this.archived;
+            firestore.collection('messages').doc(this.id).update({
+              archived: this.archived
+            });
+          }
+
           reply = async () => {
+            this.replied = true;
             window.open(encodeURI(`mailto:${this.email}?subject=RE: ${this.subject}&body=${this.body}`), '_blank');
             firestore.collection('messages').doc(this.id).update({
               replied: true
