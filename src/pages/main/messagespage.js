@@ -169,8 +169,8 @@ class MessagesPage extends Component {
     messages.sort((a, b) => b.date.localeCompare(a.date));
     this.setState({
       allMessages: messages,
-      messages: messages
     });
+    this.updateList(this.state.tab);
   }
   
   updateList = (index) => {
@@ -386,8 +386,8 @@ class MessagesPage extends Component {
                       }}
                     >
                       <Tab label="Needs Action" {...a11yProps(0)} style={{minWidth:"40%"}}/>
-                      <Tab label="Replied" {...a11yProps(1)} style={{minWidth:"30%"}}/>
-                      <Tab label="Archived" {...a11yProps(2)} style={{minWidth:"30%"}}/>
+                      <Tab label="Replied" {...a11yProps(1)} style={{minWidth:"27.5%"}}/>
+                      <Tab label="Archived" {...a11yProps(2)} style={{minWidth:"27.5%"}}/>
                     </Tabs>
                   </div>
                 </ListItemText>
