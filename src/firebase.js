@@ -71,6 +71,13 @@ export const getMessages = async () => {
               replied: true
             });
           }
+
+          markUnread = async () => {
+            this.replied = false;
+            firestore.collection('messages').doc(this.id).update({
+              replied: false
+            });
+          }
         }
         messages.push(new Message(doc.data(), doc.id));
       }
