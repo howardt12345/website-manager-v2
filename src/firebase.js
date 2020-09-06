@@ -47,7 +47,7 @@ export const getMessages = async () => {
         var Message = class {
           constructor(data, id) {
             this.archived = data.archived;
-            this.body = data.body;
+            this.body = decodeURIComponent(data.body);
             this.date = data.date;
             this.email = data.email;
             this.name = data.name;
@@ -66,7 +66,7 @@ export const getMessages = async () => {
 
           reply = async () => {
             this.replied = true;
-            window.open(encodeURI(`mailto:${this.email}?subject=RE: ${this.subject}&body=${this.body}`), '_blank');
+            window.open(encodeURIComponent(`mailto:${this.email}?subject=RE: ${this.subject}&body=${this.body}`), '_blank');
             firestore.collection('messages').doc(this.id).update({
               replied: true
             });
