@@ -60,7 +60,7 @@ export const getMessages = async () => {
 
           toggleArchive = async () => {
             this.archived = !this.archived;
-            firestore.collection('messages').doc(this.id).update({
+            await firestore.collection('messages').doc(this.id).update({
               archived: this.archived
             });
           }
@@ -69,20 +69,20 @@ export const getMessages = async () => {
             this.replied = true;
             console.log(`mailto:${this.email}?subject=RE: ${encodeURI(this.subject)}&body=${replaceAll(encodeURI(this.body),'%0A', '<br>')}`);
             window.open(`mailto:${this.email}?subject=RE: ${encodeURI(this.subject)}&body=${replaceAll(encodeURI(this.body),'%0A', '<br>')}`, '_blank');
-            firestore.collection('messages').doc(this.id).update({
+            await firestore.collection('messages').doc(this.id).update({
               replied: true
             });
           }
 
           markUnread = async () => {
             this.replied = false;
-            firestore.collection('messages').doc(this.id).update({
+            await firestore.collection('messages').doc(this.id).update({
               replied: false
             });
           }
 
           deleteMessage = async () => {
-            firestore.collection('messages').doc(this.id).delete().then(() => {
+            await firestore.collection('messages').doc(this.id).delete().then(() => {
               console.log(`${this.id} has been deleted. `)
             });
           }
