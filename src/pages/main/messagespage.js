@@ -169,6 +169,8 @@ class MessagesPage extends Component {
     messages.sort((a, b) => b.date.localeCompare(a.date));
     this.setState({
       allMessages: messages,
+      index: -1,
+      current: null,
     });
     this.updateList(this.state.tab);
   }
@@ -218,7 +220,7 @@ class MessagesPage extends Component {
       if(message.email.includes(query) || message.name.includes(query) || message.subject.includes(query) || message.body.includes(query)) {
         tmp.push(message);
       }
-    })
+    });
     tmp.sort((a, b) => b.date.localeCompare(a.date));
     this.setState({ messages: tmp, index: -1 });
   }
@@ -268,8 +270,8 @@ class MessagesPage extends Component {
               <IconButton 
                 className={classes.iconButton}
                 onClick={() => {
-                  this.updateList(this.state.tab);
-                  
+                  message.deleteMessage();
+                  this.loadMessages();
                 }}
               >
                 <Delete />

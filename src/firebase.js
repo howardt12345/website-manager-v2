@@ -78,6 +78,12 @@ export const getMessages = async () => {
               replied: false
             });
           }
+
+          deleteMessage = async () => {
+            firestore.collection('messages').doc(this.id).delete().then(() => {
+              console.log(`${this.id} has been deleted. `)
+            });
+          }
         }
         messages.push(new Message(doc.data(), doc.id));
       }
