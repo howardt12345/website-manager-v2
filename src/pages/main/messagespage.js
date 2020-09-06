@@ -462,9 +462,9 @@ class MessagesPage extends Component {
             <Button onClick={this.closeDialog} color="primary">
               Cancel
             </Button>
-            <Button onClick={() => {
-              this.state.current.deleteMessage();
-              this.loadMessages();
+            <Button onClick={async () => {
+              await this.state.current.deleteMessage();
+              await this.loadMessages();
               this.closeDialog();
             }} color="primary" autoFocus>
               OK
