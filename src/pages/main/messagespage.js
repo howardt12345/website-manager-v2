@@ -15,7 +15,7 @@ import {
   Tabs, Tab,
   Toolbar,
   Tooltip,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import { 
   Archive, 
