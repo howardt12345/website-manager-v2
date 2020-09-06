@@ -212,6 +212,7 @@ class MessagesPage extends Component {
       current: null,
       deleteDialog: false,
     });
+    console.log(messages);
     this.updateList(this.state.tab);
   }
   
@@ -314,7 +315,7 @@ class MessagesPage extends Component {
           <Box>{message.subject}</Box>
         </Typography>
         <Box m={1} />
-        <Typography paragraph>
+        <Typography paragraph style={{whiteSpace: 'pre-line'}}>
           {message.body}
         </Typography>
       </div>

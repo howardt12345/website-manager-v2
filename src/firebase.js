@@ -3,6 +3,7 @@ import "firebase/auth";
 import "firebase/firestore";
 import "firebase/storage";
 import { firebaseConfig } from '@vars';
+import { replaceAll } from '@utils';
 
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
@@ -66,7 +67,8 @@ export const getMessages = async () => {
 
           reply = async () => {
             this.replied = true;
-            window.open(encodeURIComponent(`mailto:${this.email}?subject=RE: ${this.subject}&body=${this.body}`), '_blank');
+            console.log(`mailto:${this.email}?subject=RE: ${encodeURI(this.subject)}&body=${replaceAll(encodeURI(this.body),'%0A', '<br>')}`);
+            window.open(`mailto:${this.email}?subject=RE: ${encodeURI(this.subject)}&body=${replaceAll(encodeURI(this.body),'%0A', '<br>')}`, '_blank');
             firestore.collection('messages').doc(this.id).update({
               replied: true
             });
