@@ -4,17 +4,15 @@ import { getMessages } from '@firebase-api';
 import { MainConsumer } from '@api';
 import { 
   Box,
+  Button,
   CssBaseline,
   Drawer,
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
   Divider,
   IconButton,
   InputBase,
-  List,
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemText,
-  Tabs,
-  Tab,
+  List, ListItem, ListItemSecondaryAction, ListItemText,
+  Tabs, Tab,
   Toolbar,
   Tooltip,
   Typography
@@ -150,6 +148,47 @@ function a11yProps(index) {
   };
 }
 
+const DeleteDialog = (props) => {
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
+    <div>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Delete message?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this message? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => {
+            props.delete();
+            handleClose();
+          }} color="primary" autoFocus>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+}
+
 class MessagesPage extends Component {
 
   constructor(props) {
@@ -171,6 +210,7 @@ class MessagesPage extends Component {
       allMessages: messages,
       index: -1,
       current: null,
+      deleteDialog: false,
     });
     this.updateList(this.state.tab);
   }
@@ -178,39 +218,30 @@ class MessagesPage extends Component {
   updateList = (index) => {
     switch(index) {
       case 0:
-        this.needsAction();
+        this.setState({
+          messages: this.state.allMessages.filter(message => !message.replied).filter(message => !message.archived),
+          index: -1,
+        });
         break;
       case 1:
-        this.replied();
+        this.setState({
+          messages: this.state.allMessages.filter(message => message.replied),
+          index: -1,
+        });
         break;
       case 2:
-        this.archived();
+        this.setState({
+          messages: this.state.allMessages.filter(message => message.archived),
+          index: -1,
+        });
         break;
       default:
-        this.needsAction();
+        this.setState({
+          messages: this.state.allMessages.filter(message => !message.replied).filter(message => !message.archived),
+          index: -1,
+        });
         break;
     }
-  }
-
-  needsAction = () => {
-    this.setState({
-      messages: this.state.allMessages.filter(message => !message.replied).filter(message => !message.archived),
-      index: -1,
-    });
-  }
-
-  replied = () => {
-    this.setState({
-      messages: this.state.allMessages.filter(message => message.replied),
-      index: -1,
-    });
-  }
-
-  archived = () => {
-    this.setState({
-      messages: this.state.allMessages.filter(message => message.archived),
-      index: -1,
-    });
   }
 
   search = (query) => {
@@ -270,8 +301,7 @@ class MessagesPage extends Component {
               <IconButton 
                 className={classes.iconButton}
                 onClick={() => {
-                  message.deleteMessage();
-                  this.loadMessages();
+                  this.openDialog();
                 }}
               >
                 <Delete />
@@ -330,6 +360,14 @@ class MessagesPage extends Component {
       current: message,
       index: index,
     });
+  }
+
+  openDialog = () => {
+    this.setState({ deleteDialog: true });
+  }
+
+  closeDialog = () => {
+    this.setState({ deleteDialog: false });
   }
  
   render() {
@@ -407,6 +445,31 @@ class MessagesPage extends Component {
           <Toolbar variant="dense"/>
           {this.state.current === null ? <div /> : <this.MessageContent message={this.state.current} classes={classes}/>}
         </main>
+        <Dialog
+          open={this.state.deleteDialog}
+          onClose={this.closeDialog}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Delete message?"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to delete this message? This action cannot be undone.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.closeDialog} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={() => {
+              this.state.current.deleteMessage();
+              this.loadMessages();
+              this.closeDialog();
+            }} color="primary" autoFocus>
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }
