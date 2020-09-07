@@ -26,6 +26,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-material-ui-icon-picker": "git+https://github.com/howardt12345/material-ui-icon-picker.git",
     "react-responsive-masonry": "^2.1.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3",
