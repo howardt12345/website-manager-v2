@@ -1,6 +1,6 @@
 import React, { Component, useState, useRef, useEffect } from 'react';
 import { MainAppBar, ImageMasonry } from '@components'
-import { fromFirestore, getUrlsFor } from '@api';
+import { fromFirestore, getUrlsFor, ThemeToggleConsumer } from '@api';
 import { 
   Box,
   Button,
@@ -11,9 +11,11 @@ import {
   Drawer, 
   Fab,
   Grid,
+  Icon,
   IconButton,
   Link,
   List, ListItem, ListItemSecondaryAction, ListItemText,
+  TextField,
   Toolbar,
   Tooltip,
   Typography,
@@ -26,7 +28,7 @@ import {
 
 } from '@material-ui/icons/';
 import { makeStyles } from '@material-ui/core/styles';
-import MaterialUiIconPicker from 'react-material-ui-icon-picker';
+import { MaterialUiIconPicker } from '@components/material-ui-icon-picker';
 
 const _ = require('lodash');
 
@@ -200,6 +202,53 @@ const Tiles = (props) => {
   )
 }
 
+const CategoryDialog = (props) => {
+  const { edit, name, icon, onClose, onSave } = props;
+  const [newName, setNewName] = useState(name);
+  const [newIcon, setNewIcon] = useState(icon);
+
+  return (
+    <div>
+      <DialogTitle>{edit ? 'Edit Category' : 'Add Category'}</DialogTitle>
+      <DialogContent>
+        <TextField 
+          id="outlined-basic" 
+          label="Name" 
+          variant="outlined" 
+          onChange={(event) => {
+            setNewName(event.target.value);
+          }}
+        />
+        <Box m={1} />
+        <ThemeToggleConsumer>
+          {themecontext => (
+            <Box display="flex" flexDirection='row' alignItems='center'>
+              <Box flexGrow={1} justifyContent="flex-start">
+                <MaterialUiIconPicker 
+                  theme={themecontext.theme}
+                  
+                  onPick={(icon) => {
+                    console.log(icon.name);
+                    setNewIcon(icon.name);
+                  }}
+                />
+              </Box>
+              <Icon>{newIcon}</Icon>
+            </Box>
+          )}
+        </ThemeToggleConsumer>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={() => {onSave(newName); onClose()}} color="primary">
+          OK
+        </Button>
+      </DialogActions>
+    </div>
+  );
+}
 
 class PortfolioPage extends Component {
 
@@ -245,7 +294,12 @@ class PortfolioPage extends Component {
                 </Typography>
               </ListItemText>
               <ListItemSecondaryAction>
-                <IconButton edge='end' onClick={() => {}}>
+                <IconButton 
+                  edge='end' 
+                  onClick={() => {
+                    this.setState({ addCategory: true });
+                  }}
+                >
                   <Add />
                 </IconButton>
               </ListItemSecondaryAction>
@@ -277,6 +331,13 @@ class PortfolioPage extends Component {
         </div>
       </Drawer>
     );
+  }
+
+  handleClose = () => {
+    this.setState({
+      addCategory: false,
+      addFab: false,
+    });
   }
 
   render() {
@@ -334,6 +395,17 @@ class PortfolioPage extends Component {
           )
         }
         </div>
+        <Dialog open={this.state.addCategory} onClose={this.handleClose}>
+          <CategoryDialog 
+            edit={false}
+            name={''}
+            icon={''}
+            onClose={this.handleClose}
+            onSave={(newName) => {
+              console.log(newName);
+            }}
+          />
+        </Dialog>
       </div>
     );
   }
