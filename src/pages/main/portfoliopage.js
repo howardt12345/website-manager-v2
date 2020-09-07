@@ -14,7 +14,7 @@ import {
   Icon,
   IconButton,
   Link,
-  List, ListItem, ListItemSecondaryAction, ListItemText,
+  List, ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText,
   TextField,
   Toolbar,
   Tooltip,
@@ -25,14 +25,14 @@ import {
   Edit,
   DeleteForever,
   ExpandLess, ExpandMore,
-
+  Refresh,
 } from '@material-ui/icons/';
 import { makeStyles } from '@material-ui/core/styles';
 import { MaterialUiIconPicker } from '@components/material-ui-icon-picker';
 
 const _ = require('lodash');
 
-const drawerWidth = 240;
+const drawerWidth = 260;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NestedList = (props) => {
-  const { classes, name, elements, onOpen, onSelect } = props;
+  const { classes, name, icon, elements, onOpen, onSelect } = props;
   const [open, setOpen] = useState(false);
 
   const handleClick = () => {
@@ -94,6 +94,9 @@ const NestedList = (props) => {
   return (
     <div>
       <ListItem button onClick={handleClick} key={`${name}/title`}>
+        <ListItemIcon>
+          <Icon>{icon}</Icon>
+        </ListItemIcon>
         <ListItemText primary={name} />
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItem>      
@@ -227,6 +230,7 @@ const CategoryDialog = (props) => {
                 <MaterialUiIconPicker 
                   theme={themecontext.theme}
                   label={edit ? 'Edit Icon' : 'Pick Icon'}
+                  modalTitle='Pick Icon'
                   onPick={(icon) => {
                     console.log(icon.name);
                     setNewIcon(icon.name);
@@ -244,7 +248,7 @@ const CategoryDialog = (props) => {
         <Button onClick={onClose} color="primary">
           Cancel
         </Button>
-        <Button onClick={() => {onSave(newName); onClose()}} color="primary">
+        <Button onClick={() => {onSave({name: newName, icon: newIcon}); onClose()}} color="primary">
           OK
         </Button>
       </DialogActions>
@@ -273,6 +277,8 @@ class PortfolioPage extends Component {
     this.setState({
       manager: m,
       loaded: true,
+      category: 0,
+      subcategory: 0,
     });
   }
 
@@ -296,16 +302,26 @@ class PortfolioPage extends Component {
                 </Typography>
               </ListItemText>
               <ListItemSecondaryAction>
-                <Tooltip title='Add Category'>
-                  <IconButton 
-                    edge='end' 
-                    onClick={() => {
-                      this.setState({ addCategory: true });
-                    }}
-                  >
-                    <Add />
-                  </IconButton>
-                </Tooltip>
+                <Box flexDirection='row'>
+                  <Tooltip title='Refresh'>
+                    <IconButton 
+                      edge='end' 
+                      onClick={this.initializeManager}
+                    >
+                      <Refresh />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title='Add Category'>
+                    <IconButton 
+                      edge='end' 
+                      onClick={() => {
+                        this.setState({ addCategory: true });
+                      }}
+                    >
+                      <Add />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
               </ListItemSecondaryAction>
             </ListItem>
           </List>
@@ -316,6 +332,7 @@ class PortfolioPage extends Component {
                 key={`${category}/nestedlist`}
                 classes={classes} 
                 name={category}
+                icon={this.state.manager.getIconAt(category)}
                 elements={this.state.manager.getSubcategoriesAt(category)}
                 onSelect={(i) => {
                   this.setState({
@@ -405,8 +422,8 @@ class PortfolioPage extends Component {
             name={''}
             icon={''}
             onClose={this.handleClose}
-            onSave={(newName) => {
-              console.log(newName);
+            onSave={(data) => {
+              this.state.manager.addCategory(data.name, data.icon);
             }}
           />
         </Dialog>
