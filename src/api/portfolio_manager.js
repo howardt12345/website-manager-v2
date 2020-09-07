@@ -35,6 +35,9 @@ class PortfolioManager {
    */
   getCategory = (index) => [...this.menu.keys()][index];
 
+  getIconAt = (category) => this.getPicturesAt(category, 'icon')[0].name;
+  getIconFrom = (index) => this.getPicturesFrom(index, 0)[0].name;
+
   /**
    * Gets the subcategories at the given category name.
    * @param {String} category The category to get the subcategories from.
@@ -54,7 +57,11 @@ class PortfolioManager {
    */
   getSubcategoriesFrom = (index) => [...this.menu.get([...this.menu.keys()][index]).keys()];
 
-
+  /**
+   * Gets the subcategory name from the given category and subcategory index. Defaults to 'All' if the subcategory index is 0, regardless of category index.
+   * @param {*} categoryIndex     The index of the category to get the subcategories from.
+   * @param {*} subcategoryIndex  The index of the subcategory to get the name from.
+   */
   getSubcategoryFrom = (categoryIndex, subcategoryIndex) => subcategoryIndex === 0 ? 'All' : this.getSubcategoriesFrom(categoryIndex)[subcategoryIndex];
   /**
    * Gets the list of pictures at the given category and subcategory keys.
@@ -259,6 +266,18 @@ class PortfolioManager {
         subcategory: '',
       };
     }
+  }
+
+  addCategory = async (category, icon) => {
+    let subTmp = new Map();
+    subTmp.set('icon', [new Picture({ name: icon, time: currentTime() })]);
+    this.menu.set(category, subTmp);
+
+    firestore.collection('photos').doc(category).set({
+      category: category,
+      icon: icon,
+      subcategories: []
+    });
   }
 }
 
