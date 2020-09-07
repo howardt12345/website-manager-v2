@@ -6,6 +6,7 @@ import {
   Button,
   CircularProgress,
   Collapse,
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
   Divider,
   Drawer, 
   Fab,
@@ -25,6 +26,8 @@ import {
 
 } from '@material-ui/icons/';
 import { makeStyles } from '@material-ui/core/styles';
+import MaterialUiIconPicker from 'react-material-ui-icon-picker';
+
 const _ = require('lodash');
 
 const drawerWidth = 240;
@@ -142,9 +145,42 @@ const useContainerDimensions = myRef => {
 const Tiles = (props) => {
   const componentRef = useRef();
   const { width } = useContainerDimensions(componentRef);
+  const { classes, category, subcategory, data, onClick, onEdit, onDelete } = props;
   
   return (
     <div ref={componentRef}>
+      <Box display="flex" flexDirection='row'>
+        <Box flexGrow={1} justifyContent="flex-start">
+          <Typography variant="h3" display="inline">
+            {category}
+          </Typography>
+          <Typography variant="h4" display="inline">
+            {`: ${subcategory}`}
+          </Typography>
+        </Box>
+        <Box flexDirection='row'>
+          <Tooltip title='Edit'>
+            <IconButton
+              className={classes.iconButton}
+              onClick={() => {
+                onEdit();
+              }}
+              >
+              <Edit />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title='Delete'>
+            <IconButton
+              className={classes.iconButton}
+              onClick={() => {
+                onDelete();
+              }}
+              >
+              <DeleteForever />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      </Box>
       {width
       ? (
         <ImageMasonry 
@@ -152,9 +188,9 @@ const Tiles = (props) => {
           containerWidth={'100%'}
           forceOrder={true}
           animate={true}
-          imageUrls={getUrlsFor(props.data)}
+          imageUrls={getUrlsFor(data)}
           onClick={(index) => {
-            props.onClick(index);
+            onClick(index);
           }}
         />
       ) : (
@@ -163,6 +199,7 @@ const Tiles = (props) => {
     </div>
   )
 }
+
 
 class PortfolioPage extends Component {
 
@@ -173,6 +210,8 @@ class PortfolioPage extends Component {
       loaded: false,
       category: 0,
       subcategory: 0,
+      addCategory: false,
+      addFab: false,
     };
     this.initializeManager();
   }
@@ -186,6 +225,60 @@ class PortfolioPage extends Component {
     });
   }
 
+  CategoriesDrawer = (props) => {
+    const { classes } = props;
+    return (
+      <Drawer
+        className={classes.drawer}
+        variant="permanent"
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+      >
+        <Toolbar variant="dense"/>
+        <div className={classes.drawerContainer}>
+          <List>
+            <ListItem>
+              <ListItemText>
+                <Typography variant='h5'>
+                  Categories
+                </Typography>
+              </ListItemText>
+              <ListItemSecondaryAction>
+                <IconButton edge='end' onClick={() => {}}>
+                  <Add />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          </List>
+          <Divider />
+          <List>
+            {this.state.manager.getCategoriesCapitalized().map((category, index) => (
+              <NestedList 
+                key={`${category}/nestedlist`}
+                classes={classes} 
+                name={category}
+                elements={this.state.manager.getSubcategoriesAt(category)}
+                onSelect={(i) => {
+                  this.setState({
+                    category: index,
+                    subcategory: i,
+                  });
+                }}
+                onOpen={() => {
+                  this.setState({
+                    category: index,
+                    subcategory: 0,
+                  });
+                }}
+              />
+            ))}
+          </List>
+        </div>
+      </Drawer>
+    );
+  }
+
   render() {
     const classes = this.props.classes;
 
@@ -196,99 +289,33 @@ class PortfolioPage extends Component {
           {this.state.loaded
           ? (
             <div>
-              <Drawer
-                className={classes.drawer}
-                variant="permanent"
-                classes={{
-                  paper: classes.drawerPaper,
-                }}
-              >
-                <Toolbar variant="dense"/>
-                <div className={classes.drawerContainer}>
-                  <List>
-                    <ListItem>
-                      <ListItemText>
-                        <Typography variant='h5'>
-                          Categories
-                        </Typography>
-                      </ListItemText>
-                      <ListItemSecondaryAction>
-                        <IconButton edge='end' onClick={() => {}}>
-                          <Add />
-                        </IconButton>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  </List>
-                  <Divider />
-                  <List>
-                    {this.state.manager.getCategoriesCapitalized().map((category, index) => (
-                      <NestedList 
-                        key={`${category}/nestedlist`}
-                        classes={classes} 
-                        name={category}
-                        elements={this.state.manager.getSubcategoriesAt(category)}
-                        onSelect={(i) => {
-                          this.setState({
-                            category: index,
-                            subcategory: i,
-                          });
-                        }}
-                        onOpen={() => {
-                          this.setState({
-                            category: index,
-                            subcategory: 0,
-                          });
-                        }}
-                      />
-                    ))}
-                  </List>
-                </div>
-              </Drawer>
+              <this.CategoriesDrawer classes={classes}/>
               <main className={classes.content}>
                 <Toolbar variant="dense"/>
-                <Box display="flex" flexDirection='row'>
-                  <Box flexGrow={1} justifyContent="flex-start">
-                    <Typography variant="h3" display="inline">
-                      {this.state.manager.getCategory(this.state.category)}
-                    </Typography>
-                    <Typography variant="h4" display="inline">
-                      {`: ${this.state.manager.getSubcategoryFrom(this.state.category, this.state.subcategory)}`}
-                    </Typography>
-                  </Box>
-                  <Box flexDirection='row'>
-                    <Tooltip title='Edit'>
-                      <IconButton
-                        className={classes.iconButton}
-                        onClick={() => {
-
-                        }}
-                        >
-                        <Edit />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title='Delete'>
-                      <IconButton
-                        className={classes.iconButton}
-                        onClick={() => {
-                          
-                        }}
-                        >
-                        <DeleteForever />
-                      </IconButton>
-                    </Tooltip>
-                  </Box>
-                </Box>
                 <Tiles 
+                  classes={classes}
+                  category={this.state.manager.getCategory(this.state.category)}
+                  subcategory={this.state.manager.getSubcategoryFrom(this.state.category, this.state.subcategory)}
                   data={this.state.manager.getPicturesQuery(`${this.state.manager.getCategory(this.state.category)}/${this.state.manager.getSubcategoryFrom(this.state.category, this.state.subcategory)}`)} 
                   onClick={(index) => {
                     console.log(index);
+                  }}
+                  onEdit={() => {
+
+                  }}
+                  onDelete={() => {
+                    
                   }}
                 />
                 <Fab 
                   className={classes.fab}
                   variant="extended"
                   onClick={() => {
+                    if (this.state.subcategory === 0) {
 
+                    } else {
+
+                    }
                   }}
                 >
                   <Add className={classes.extendedIcon} />
