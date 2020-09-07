@@ -226,14 +226,16 @@ const CategoryDialog = (props) => {
               <Box flexGrow={1} justifyContent="flex-start">
                 <MaterialUiIconPicker 
                   theme={themecontext.theme}
-                  
+                  label={edit ? 'Edit Icon' : 'Pick Icon'}
                   onPick={(icon) => {
                     console.log(icon.name);
                     setNewIcon(icon.name);
                   }}
                 />
               </Box>
-              <Icon>{newIcon}</Icon>
+              <Tooltip title={newIcon}>
+                <Icon color='primary'>{newIcon}</Icon>
+              </Tooltip>
             </Box>
           )}
         </ThemeToggleConsumer>
@@ -294,14 +296,16 @@ class PortfolioPage extends Component {
                 </Typography>
               </ListItemText>
               <ListItemSecondaryAction>
-                <IconButton 
-                  edge='end' 
-                  onClick={() => {
-                    this.setState({ addCategory: true });
-                  }}
-                >
-                  <Add />
-                </IconButton>
+                <Tooltip title='Add Category'>
+                  <IconButton 
+                    edge='end' 
+                    onClick={() => {
+                      this.setState({ addCategory: true });
+                    }}
+                  >
+                    <Add />
+                  </IconButton>
+                </Tooltip>
               </ListItemSecondaryAction>
             </ListItem>
           </List>
