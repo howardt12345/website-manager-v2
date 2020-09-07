@@ -112,7 +112,7 @@ class MaterialUiIconPicker extends React.Component {
 				closeIcon: {
 					cursor: 'pointer',
 				}
-			}
+			},
 		};
 	}
 
