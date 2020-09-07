@@ -22,7 +22,7 @@
     "electron-is-dev": "^1.2.0",
     "firebase": "^7.15.1",
     "fontsource-roboto": "^3.0.3",
-    "material-ui-dropzone": "^3.3.0",
+    "material-ui-dropzone": "^3.4.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
