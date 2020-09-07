@@ -218,7 +218,6 @@ class MessagesPage extends Component {
 
   MessageContent = (props) => {
     const { message, classes } = props;
-    //TODO: Icon Button Functionality
     return (
       <div>
         <Box display="flex" flexDirection='row'>
