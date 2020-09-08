@@ -302,7 +302,7 @@ class PortfolioManager {
     for(var i = 0; i < images.length; i++) {
       var image = images[i];
       var path = image.path.split('/');
-      var category = path[0], subcategory = path.length > 1 ? path[1] : null;
+      var subcategory = path.length > 1 ? path[1] : null;
       var oldPath = image.path, newPath = `${categoryNew}${subcategory === null ? '' : `/${subcategory}`}`;
       image.path = newPath;
       console.log(newPath);
