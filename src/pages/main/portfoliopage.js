@@ -146,7 +146,7 @@ class PortfolioPage extends Component {
           </List>
           <Divider />
           <List>
-            {this.state.manager.getCategoriesCapitalized().map((category, index) => (
+            {this.state.manager.getCategories().map((category, index) => (
               <NestedList 
                 key={`${category}/nestedlist`}
                 classes={classes} 
@@ -246,11 +246,12 @@ class PortfolioPage extends Component {
               if (this.state.editCategory) {
                 const oldName = this.state.manager.getCategory(this.state.category);
                 const oldIcon = this.state.manager.getIconFrom(this.state.category);
+                console.log(oldIcon);
+                if(oldIcon !== data.icon) {
+                  await this.state.manager.changeIcon(oldName, data.icon);
+                }
                 if(oldName !== data.name) {
                   await this.state.manager.renameCategory(oldName, data.name);
-                }
-                if(oldIcon !== data.icon) {
-                  
                 }
               } else {
                 this.state.manager.addCategory(data.name, data.icon);

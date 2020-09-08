@@ -349,6 +349,13 @@ class PortfolioManager {
     this.deleteCategory(categoryOld);
   }
 
+  changeIcon = async (category, icon) => {
+    await firestore.collection('photos').doc(category).update({
+      icon: icon
+    });
+
+    this.menu.get(category).get('icon')[0] = new Picture({ name: icon, time: currentTime() });
+  }
 
   addPhoto = async (props) => {
     const { category, subcategory, newPic, newFile, newDLFile} = props;
