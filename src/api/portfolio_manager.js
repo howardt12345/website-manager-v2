@@ -1,4 +1,4 @@
-import { firestore } from '@firebase-api';
+import { downloadFile, firestore, moveFirebaseFile, storage } from '@firebase-api';
 import { currentTime, replaceAll, capitalize, filter } from '@utils';
 
 const _ = require('lodash');
@@ -283,6 +283,132 @@ class PortfolioManager {
       icon: icon,
       subcategories: []
     });
+  }
+
+
+  renameCategory = async (categoryOld, categoryNew) => {
+    this.menu.set(categoryNew, this.menu.get(categoryOld));
+
+    var oldData = await firestore.collection('photos').doc(categoryOld).get();
+    
+    await firestore.collection('photos').doc(categoryNew).set({
+      category: categoryNew,
+      icon: oldData.data().icon,
+      subcategories: oldData.data().subcategories,
+    });
+
+    var images = this.getAllPicturesAt(categoryOld);
+    console.log(images);
+    for(var i = 0; i < images.length; i++) {
+      var image = images[i];
+      var path = image.path.split('/');
+      var category = path[0], subcategory = path.length > 1 ? path[1] : null;
+      var oldPath = image.path, newPath = `${categoryNew}${subcategory === null ? '' : `/${subcategory}`}`;
+      image.path = newPath;
+      console.log(newPath);
+
+      if(subcategory) {
+        await firestore.collection("photos").doc(categoryOld).collection(subcategory).doc(image.name).delete();
+        await firestore.collection("photos").doc(categoryNew).collection(subcategory).doc(image.name).set({
+          'name': image.name,
+          'title': image.title,
+          'w': image.width,
+          'h': image.height,
+          'desc': image.description,
+          'buy': image.buy,
+          'dl': image.download,
+          'time': image.time,
+        }).catch((error) => console.log(error));
+        try {
+          await moveFirebaseFile(`${oldPath}/${image.name}`, `${newPath}/${image.name}`);
+          await moveFirebaseFile(`${oldPath}/${image.dl}`, `${newPath}/${image.dl}`);
+        } catch (e) {
+          console.log(e);
+        }
+      } else {
+        await firestore.collection("photos").doc(categoryOld).collection('images').doc(image.name).delete();
+        await firestore.collection("photos").doc(categoryNew).collection('images').doc(image.name).set({
+          'name': image.name,
+          'title': image.title,
+          'w': image.width,
+          'h': image.height,
+          'desc': image.description,
+          'buy': image.buy,
+          'dl': image.download,
+          'time': image.time,
+        }).catch((error) => console.log(error));
+        try {
+          await moveFirebaseFile(`${oldPath}/${image.name}`, `${newPath}/${image.name}`);
+          await moveFirebaseFile(`${oldPath}/${image.dl}`, `${newPath}/${image.dl}`);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    }
+
+    this.deleteCategory(categoryOld);
+  }
+
+
+  addPhoto = async (props) => {
+    const { category, subcategory, newPic, newFile, newDLFile} = props;
+    if(subcategory) {
+      await firestore.collection("photos").doc(category).collection(subcategory).doc(newPic.name).set({
+        'name': newPic.name,
+        'title': newPic.title,
+        'w': newPic.width,
+        'h': newPic.height,
+        'desc': newPic.description,
+        'buy': newPic.buy,
+        'dl': newPic.download,
+        'time': newPic.time,
+      }).catch((error) => console.log(error));
+      try {
+        if(newFile) {
+          await storage.ref().child(category).child(subcategory).child(newPic.name).put(newFile);
+        }
+        if(newDLFile) {
+          await storage.ref().child(category).child(subcategory).child(newPic.dl).put(newDLFile);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      await firestore.collection("photos").doc(category).collection('images').doc(newPic.name).set({
+        'name': newPic.name,
+        'title': newPic.title,
+        'w': newPic.width,
+        'h': newPic.height,
+        'desc': newPic.description,
+        'buy': newPic.buy,
+        'dl': newPic.download,
+        'time': newPic.time,
+      }).catch((error) => console.log(error));
+      try {
+        if(newFile) {
+          await storage.ref().child(category).child(newPic.name).put(newFile);
+        }
+        if(newDLFile) {
+          await storage.ref().child(category).child(newPic.dl).put(newDLFile);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+
+  deleteCategory = async (category) => {
+    const subcategories = this.getSubcategoriesAt(category);
+    subcategories.forEach(async (subcategory) => {
+      await firestore.collection('photos').doc(category).collection(subcategory).get().then(async (data) => {
+        data.docs.map(async (val) => {
+          await val.delete();
+          return null;
+        });
+      });
+    });
+    await firestore.collection('photos').doc(category).delete();
+    this.menu.delete(category);
   }
 }
 

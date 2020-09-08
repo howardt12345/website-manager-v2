@@ -242,9 +242,16 @@ class PortfolioPage extends Component {
             name={this.state.editCategory ? this.state.manager.getCategory(this.state.category) : ''}
             icon={this.state.editCategory ? this.state.manager.getIconFrom(this.state.category) : ''}
             onClose={this.handleClose}
-            onSave={(data) => {
+            onSave={async (data) => {
               if (this.state.editCategory) {
-                
+                const oldName = this.state.manager.getCategory(this.state.category);
+                const oldIcon = this.state.manager.getIconFrom(this.state.category);
+                if(oldName !== data.name) {
+                  await this.state.manager.renameCategory(oldName, data.name);
+                }
+                if(oldIcon !== data.icon) {
+                  
+                }
               } else {
                 this.state.manager.addCategory(data.name, data.icon);
               }

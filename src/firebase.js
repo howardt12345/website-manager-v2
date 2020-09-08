@@ -105,6 +105,25 @@ export const moveFirebaseFile = (currentPath, destinationPath) => {
   let oldRef = storage.ref().child(currentPath);
 
   oldRef.getDownloadURL().then(url => {
+    fetch((dev ? proxyurl : '') + url).then(htmlReturn => htmlReturn.blob()).then(file => {
+      //Write the file to the new storage place
+      let status = storage
+        .ref()
+        .child(destinationPath)
+        .put(file);
+      //Remove the old reference
+      oldRef.delete();
+      console.log(`${currentPath} has been moved to ${destinationPath}`);
+      return status;
+    });
+  });
+}
+
+export const downloadFile = async (filePath) => {
+  let ref = storage.ref().child(filePath);
+  var file = null;
+
+  await ref.getDownloadURL().then(url => {
     fetch((dev ? proxyurl : '') + url).then(htmlReturn => {
       let fileArray = new Uint8Array();
       const reader = htmlReturn.body.getReader();
@@ -125,16 +144,21 @@ export const moveFirebaseFile = (currentPath, destinationPath) => {
           return reader.read().then(appendStreamChunk);
         }
       })
-      .then(file => {
+      .then(f => {
         //Write the file to the new storage place
-        let status = storage
-          .ref()
-          .child(destinationPath)
-          .put(file);
-        //Remove the old reference
-        oldRef.delete();
-        return status;
+        file = f;
       });
     });
+  });
+  return file;
+}
+
+export const deleteFile = (filePath) => {
+  let ref = storage.ref().child(filePath);
+
+  ref.delete().then(function() {
+    console.log(`${filePath} has been deleted.`);
+  }).catch(function(error) {
+    console.error(`${filePath} failed to be deleted.`);
   });
 }
