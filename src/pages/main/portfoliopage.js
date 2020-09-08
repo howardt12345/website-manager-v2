@@ -218,6 +218,7 @@ const CategoryDialog = (props) => {
           id="outlined-basic" 
           label="Name" 
           variant="outlined" 
+          defaultValue={name}
           onChange={(event) => {
             setNewName(event.target.value);
           }}
@@ -421,8 +422,8 @@ class PortfolioPage extends Component {
         <Dialog open={this.state.addCategory || this.state.editCategory} onClose={this.handleClose}>
           <CategoryDialog 
             edit={this.state.editCategory}
-            name={''}
-            icon={''}
+            name={this.state.editCategory ? this.state.manager.getCategory(this.state.category) : ''}
+            icon={this.state.editCategory ? this.state.manager.getIconFrom(this.state.category) : ''}
             onClose={this.handleClose}
             onSave={(data) => {
               if (this.state.editCategory) {
