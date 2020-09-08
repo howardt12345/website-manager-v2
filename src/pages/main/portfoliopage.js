@@ -1,20 +1,18 @@
-import React, { Component, useState, useRef, useEffect } from 'react';
-import { MainAppBar, ImageMasonry } from '@components'
-import { fromFirestore, getUrlsFor, ThemeToggleConsumer } from '@api';
+import React, { Component, useState } from 'react';
+import { MainAppBar } from '@components'
+import { fromFirestore, ThemeToggleConsumer } from '@api';
+import { NestedList, Tiles } from '@components/portfolio';
 import { 
   Box,
   Button,
   CircularProgress,
-  Collapse,
-  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
+  Dialog, DialogActions, DialogContent, DialogTitle,
   Divider,
   Drawer, 
   Fab,
-  Grid,
   Icon,
   IconButton,
-  Link,
-  List, ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText,
+  List, ListItem, ListItemSecondaryAction, ListItemText,
   TextField,
   Toolbar,
   Tooltip,
@@ -22,9 +20,6 @@ import {
 } from '@material-ui/core';
 import { 
   Add,
-  Edit,
-  DeleteForever,
-  ExpandLess, ExpandMore,
   Refresh,
 } from '@material-ui/icons/';
 import { makeStyles } from '@material-ui/core/styles';
@@ -79,131 +74,6 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0, 1),
   },
 }));
-
-const NestedList = (props) => {
-  const { classes, name, icon, elements, onOpen, onSelect } = props;
-  const [open, setOpen] = useState(false);
-
-  const handleClick = () => {
-    setOpen(!open);
-    if(!open && onOpen) {
-      props.onOpen();
-    }
-  };
-
-  return (
-    <div>
-      <ListItem button onClick={handleClick} key={`${name}/title`}>
-        <ListItemIcon>
-          <Icon>{icon}</Icon>
-        </ListItemIcon>
-        <ListItemText primary={name} />
-        {open ? <ExpandLess /> : <ExpandMore />}
-      </ListItem>      
-      <Collapse in={open} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          {elements.map((e, index) => (
-            <ListItem 
-              key={`${name}/${e}/tile`}
-              button 
-              className={classes.nested} 
-              onClick={() => {
-                onSelect(index);
-              }}
-            >
-              <ListItemText primary={e === 'icon' ? 'All' : e} />
-            </ListItem>
-          ))}
-        </List>
-      </Collapse>
-    </div>
-  );
-}
-
-const useContainerDimensions = myRef => {
-  const getDimensions = () => ({
-    width: myRef.current.offsetWidth,
-    height: myRef.current.offsetHeight
-  })
-
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
-
-  useEffect(() => {
-    const handleResize = () => {
-      setDimensions(getDimensions())
-    }
-
-    if (myRef.current) {
-      setDimensions(getDimensions())
-    }
-
-    window.addEventListener("resize", handleResize)
-
-    return () => {
-      window.removeEventListener("resize", handleResize)
-    }
-  }, [myRef])
-
-  return dimensions;
-};
-
-const Tiles = (props) => {
-  const componentRef = useRef();
-  const { width } = useContainerDimensions(componentRef);
-  const { classes, category, subcategory, data, onClick, onEdit, onDelete } = props;
-  
-  return (
-    <div ref={componentRef}>
-      <Box display="flex" flexDirection='row'>
-        <Box flexGrow={1} justifyContent="flex-start">
-          <Typography variant="h3" display="inline">
-            {category}
-          </Typography>
-          <Typography variant="h4" display="inline">
-            {`: ${subcategory}`}
-          </Typography>
-        </Box>
-        <Box flexDirection='row'>
-          <Tooltip title='Edit'>
-            <IconButton
-              className={classes.iconButton}
-              onClick={() => {
-                onEdit();
-              }}
-              >
-              <Edit />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title='Delete'>
-            <IconButton
-              className={classes.iconButton}
-              onClick={() => {
-                onDelete();
-              }}
-              >
-              <DeleteForever />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      </Box>
-      {width
-      ? (
-        <ImageMasonry 
-          numCols={width/300}
-          containerWidth={'100%'}
-          forceOrder={true}
-          animate={true}
-          imageUrls={getUrlsFor(data)}
-          onClick={(index) => {
-            onClick(index);
-          }}
-        />
-      ) : (
-        <div></div>
-      )}
-    </div>
-  )
-}
 
 const CategoryDialog = (props) => {
   const { edit, name, icon, onClose, onSave } = props;
