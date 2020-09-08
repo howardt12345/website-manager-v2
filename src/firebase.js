@@ -105,7 +105,7 @@ export const moveFirebaseFile = (currentPath, destinationPath) => {
   let oldRef = storage.ref().child(currentPath);
 
   oldRef.getDownloadURL().then(url => {
-    fetch(url).then(htmlReturn => {
+    fetch((dev ? proxyurl : '') + url).then(htmlReturn => {
       let fileArray = new Uint8Array();
       const reader = htmlReturn.body.getReader();
       //get the reader that reads the readable stream of data
