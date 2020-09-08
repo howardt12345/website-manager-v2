@@ -268,6 +268,11 @@ class PortfolioManager {
     }
   }
 
+  /**
+   * Adds a new category with the given category name and item. 
+   * @param {String} category The category name.
+   * @param {String} icon     The icon name.
+   */
   addCategory = async (category, icon) => {
     let subTmp = new Map();
     subTmp.set('icon', [new Picture({ name: icon, time: currentTime() })]);
