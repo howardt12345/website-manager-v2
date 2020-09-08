@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
 import { MainAppBar } from '@components'
-import { fromFirestore, ThemeToggleConsumer } from '@api';
-import { NestedList, Tiles } from '@components/portfolio';
+import { fromFirestore } from '@api';
+import { NestedList, Tiles, CategoryDialog } from '@components/portfolio';
 import { 
   Box,
   Button,
@@ -23,7 +23,6 @@ import {
   Refresh,
 } from '@material-ui/icons/';
 import { makeStyles } from '@material-ui/core/styles';
-import { MaterialUiIconPicker } from '@components/material-ui-icon-picker';
 
 const _ = require('lodash');
 
@@ -74,58 +73,6 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0, 1),
   },
 }));
-
-const CategoryDialog = (props) => {
-  const { edit, name, icon, onClose, onSave } = props;
-  const [newName, setNewName] = useState(name);
-  const [newIcon, setNewIcon] = useState(icon);
-
-  return (
-    <div>
-      <DialogTitle>{edit ? 'Edit Category' : 'Add Category'}</DialogTitle>
-      <DialogContent>
-        <TextField 
-          id="outlined-basic" 
-          label="Name" 
-          variant="outlined" 
-          defaultValue={name}
-          onChange={(event) => {
-            setNewName(event.target.value);
-          }}
-        />
-        <Box m={1} />
-        <ThemeToggleConsumer>
-          {themecontext => (
-            <Box display="flex" flexDirection='row' alignItems='center'>
-              <Box flexGrow={1} justifyContent="flex-start">
-                <MaterialUiIconPicker 
-                  theme={themecontext.theme}
-                  label={edit ? 'Edit Icon' : 'Pick Icon'}
-                  modalTitle='Pick Icon'
-                  onPick={(icon) => {
-                    console.log(icon.name);
-                    setNewIcon(icon.name);
-                  }}
-                />
-              </Box>
-              <Tooltip title={newIcon}>
-                <Icon color='primary'>{newIcon}</Icon>
-              </Tooltip>
-            </Box>
-          )}
-        </ThemeToggleConsumer>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={() => {onSave({name: newName, icon: newIcon}); onClose()}} color="primary">
-          OK
-        </Button>
-      </DialogActions>
-    </div>
-  );
-}
 
 class PortfolioPage extends Component {
 
