@@ -3,7 +3,7 @@ import "firebase/auth";
 import "firebase/firestore";
 import "firebase/storage";
 import { firebaseConfig } from '@vars';
-import { replaceAll } from '@utils';
+import { replaceAll, mergeTypedArrays } from '@utils';
 
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
@@ -93,4 +93,48 @@ export const getMessages = async () => {
   });
 
   return messages;
+}
+
+/**
+ * Moves a file in firebase storage from its current location to the destination
+ * returns the status object for the moved file.
+ * @param {String} currentPath The path to the existing file from storage root
+ * @param {String} destinationPath The desired pathe for the existing file after storage
+ */
+export const moveFirebaseFile = (currentPath, destinationPath) => {
+  let oldRef = storage.ref().child(currentPath);
+
+  oldRef.getDownloadURL().then(url => {
+    fetch(url).then(htmlReturn => {
+      let fileArray = new Uint8Array();
+      const reader = htmlReturn.body.getReader();
+      //get the reader that reads the readable stream of data
+      reader
+      .read()
+      .then(function appendStreamChunk({ done, value }) {
+        //If the reader doesn't return "done = true" append the chunk that was returned to us
+        // rinse and repeat until it is done.
+        if (value) {
+          fileArray = mergeTypedArrays(fileArray, value);
+        }
+        if (done) {
+          console.log(fileArray);
+          return fileArray;
+        } else {
+          // "Readout not complete, reading next chunk"
+          return reader.read().then(appendStreamChunk);
+        }
+      })
+      .then(file => {
+        //Write the file to the new storage place
+        let status = storage
+          .ref()
+          .child(destinationPath)
+          .put(file);
+        //Remove the old reference
+        oldRef.delete();
+        return status;
+      });
+    });
+  });
 }
