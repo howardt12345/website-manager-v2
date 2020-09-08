@@ -266,6 +266,7 @@ class PortfolioPage extends Component {
       category: 0,
       subcategory: 0,
       addCategory: false,
+      editCategory: false,
       addFab: false,
     };
     this.initializeManager();
@@ -357,6 +358,7 @@ class PortfolioPage extends Component {
   handleClose = () => {
     this.setState({
       addCategory: false,
+      editCategory: false,
       addFab: false,
     });
   }
@@ -383,7 +385,7 @@ class PortfolioPage extends Component {
                     console.log(index);
                   }}
                   onEdit={() => {
-
+                    this.setState({ editCategory: true});
                   }}
                   onDelete={() => {
                     
@@ -416,14 +418,18 @@ class PortfolioPage extends Component {
           )
         }
         </div>
-        <Dialog open={this.state.addCategory} onClose={this.handleClose}>
+        <Dialog open={this.state.addCategory || this.state.editCategory} onClose={this.handleClose}>
           <CategoryDialog 
-            edit={false}
+            edit={this.state.editCategory}
             name={''}
             icon={''}
             onClose={this.handleClose}
             onSave={(data) => {
-              this.state.manager.addCategory(data.name, data.icon);
+              if (this.state.editCategory) {
+                
+              } else {
+                this.state.manager.addCategory(data.name, data.icon);
+              }
             }}
           />
         </Dialog>
