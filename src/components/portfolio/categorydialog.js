@@ -55,7 +55,7 @@ export default function CategoryDialog(props) {
         <Button onClick={onClose} color="primary">
           Cancel
         </Button>
-        <Button onClick={() => {onSave({name: newName, icon: newIcon}); onClose()}} color="primary">
+        <Button onClick={() => {onSave({name: newName, icon: newIcon}); onClose(true)}} color="primary">
           OK
         </Button>
       </DialogActions>
