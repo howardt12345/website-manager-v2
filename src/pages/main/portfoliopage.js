@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
 import { MainAppBar } from '@components'
 import { fromFirestore } from '@api';
-import { NestedList, Tiles, CategoryDialog } from '@components/portfolio';
+import { NestedList, Tiles, CategoryDialog, DeleteDialog } from '@components/portfolio';
 import { 
   Box,
   Button,
@@ -85,6 +85,7 @@ class PortfolioPage extends Component {
       subcategory: 0,
       addCategory: false,
       editCategory: false,
+      deleteCategory: false,
       addFab: false,
     };
     this.initializeManager();
@@ -173,12 +174,19 @@ class PortfolioPage extends Component {
     );
   }
 
-  handleClose = () => {
+  handleClose = (confirm) => {
     this.setState({
       addCategory: false,
       editCategory: false,
+      deleteCategory: false,
       addFab: false,
     });
+    if(confirm) {
+      this.setState({
+        category: 0,
+        subcategory: 0,
+      })
+    }
   }
 
   render() {
@@ -206,7 +214,7 @@ class PortfolioPage extends Component {
                     this.setState({ editCategory: true});
                   }}
                   onDelete={() => {
-                    
+                    this.setState({ deleteCategory: true});
                   }}
                 />
                 <Fab 
@@ -223,6 +231,38 @@ class PortfolioPage extends Component {
                   <Add className={classes.extendedIcon} />
                   {`Add${this.state.subcategory === 0 ? '...' : ' Photo'}`}
                 </Fab>
+                <Dialog open={this.state.addCategory || this.state.editCategory} onClose={this.handleClose}>
+                  <CategoryDialog 
+                    edit={this.state.editCategory}
+                    name={this.state.editCategory ? this.state.manager.getCategory(this.state.category) : ''}
+                    icon={this.state.editCategory ? this.state.manager.getIconFrom(this.state.category) : ''}
+                    onClose={this.handleClose}
+                    onSave={async (data) => {
+                      if (this.state.editCategory) {
+                        const oldName = this.state.manager.getCategory(this.state.category);
+                        const oldIcon = this.state.manager.getIconFrom(this.state.category);
+                        console.log(oldIcon);
+                        if(oldIcon !== data.icon) {
+                          await this.state.manager.changeIcon(oldName, data.icon);
+                        }
+                        if(oldName !== data.name) {
+                          await this.state.manager.renameCategory(oldName, data.name);
+                        }
+                      } else {
+                        await this.state.manager.addCategory(data.name, data.icon);
+                      }
+                    }}
+                  />
+                </Dialog>
+                <Dialog open={this.state.deleteCategory} onClose={this.handleClose}>
+                  <DeleteDialog 
+                    name={this.state.manager.getCategory(this.state.category)}
+                    onClose={this.handleClose}
+                    onConfirm={async () => {
+                      await this.state.manager.deleteCategory(this.state.manager.getCategory(this.state.category))
+                    }}
+                  />
+                </Dialog>
               </main>
             </div>
           ) : (
@@ -236,29 +276,6 @@ class PortfolioPage extends Component {
           )
         }
         </div>
-        <Dialog open={this.state.addCategory || this.state.editCategory} onClose={this.handleClose}>
-          <CategoryDialog 
-            edit={this.state.editCategory}
-            name={this.state.editCategory ? this.state.manager.getCategory(this.state.category) : ''}
-            icon={this.state.editCategory ? this.state.manager.getIconFrom(this.state.category) : ''}
-            onClose={this.handleClose}
-            onSave={async (data) => {
-              if (this.state.editCategory) {
-                const oldName = this.state.manager.getCategory(this.state.category);
-                const oldIcon = this.state.manager.getIconFrom(this.state.category);
-                console.log(oldIcon);
-                if(oldIcon !== data.icon) {
-                  await this.state.manager.changeIcon(oldName, data.icon);
-                }
-                if(oldName !== data.name) {
-                  await this.state.manager.renameCategory(oldName, data.name);
-                }
-              } else {
-                this.state.manager.addCategory(data.name, data.icon);
-              }
-            }}
-          />
-        </Dialog>
       </div>
     );
   }
