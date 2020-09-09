@@ -349,12 +349,49 @@ class PortfolioManager {
     this.deleteCategory(categoryOld);
   }
 
+  
+  deleteCategory = async (category) => {
+    const subcategories = this.getSubcategoriesAt(category);
+    subcategories.forEach(async (subcategory) => {
+      await firestore.collection('photos').doc(category).collection(subcategory).get().then(async (data) => {
+        data.docs.map(async (doc) => {
+          await firestore.collection('photos').doc(category).collection(subcategory).doc(doc.id).delete();
+          return null;
+        });
+      });
+    });
+    await firestore.collection('photos').doc(category).delete();
+    this.menu.delete(category);
+  }
+
   changeIcon = async (category, icon) => {
     await firestore.collection('photos').doc(category).update({
       icon: icon
     });
 
     this.menu.get(category).get('icon')[0] = new Picture({ name: icon, time: currentTime() });
+  }
+
+  addSubcategory = async (category, subcategory) => {
+    this.menu.get(category).set(subcategory, []);
+
+    await firestore.collection('photos').doc(category).update({
+      subcategories: this.getSubcategoriesAt(category).slice(1)
+    });
+    await firestore.collection('photos').doc(category).collection(subcategory).doc('null').set({
+      name: 'null'
+    });
+  }
+
+  deleteSubcategory = async (category, subcategory) => {
+    this.menu.get(category).delete(subcategory);
+
+    await firestore.collection('photos').doc(category).collection(subcategory).get().then(async (data) => {
+      data.docs.map(async (doc) => {
+        await firestore.collection('photos').doc(category).collection(subcategory).doc(doc.id).delete();
+        return null;
+      });
+    });
   }
 
   addPhoto = async (props) => {
@@ -404,19 +441,6 @@ class PortfolioManager {
     }
   }
 
-  deleteCategory = async (category) => {
-    const subcategories = this.getSubcategoriesAt(category);
-    subcategories.forEach(async (subcategory) => {
-      await firestore.collection('photos').doc(category).collection(subcategory).get().then(async (data) => {
-        data.docs.map(async (val) => {
-          await val.delete();
-          return null;
-        });
-      });
-    });
-    await firestore.collection('photos').doc(category).delete();
-    this.menu.delete(category);
-  }
 }
 
 class Picture {

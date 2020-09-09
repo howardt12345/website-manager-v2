@@ -85,7 +85,7 @@ class PortfolioPage extends Component {
       subcategory: 0,
       addCategory: false,
       editCategory: false,
-      deleteCategory: false,
+      deleteDialog: false,
       addFab: false,
     };
     this.initializeManager();
@@ -178,7 +178,7 @@ class PortfolioPage extends Component {
     this.setState({
       addCategory: false,
       editCategory: false,
-      deleteCategory: false,
+      deleteDialog: false,
       addFab: false,
     });
     if(confirm) {
@@ -214,7 +214,7 @@ class PortfolioPage extends Component {
                     this.setState({ editCategory: true});
                   }}
                   onDelete={() => {
-                    this.setState({ deleteCategory: true});
+                    this.setState({ deleteDialog: true});
                   }}
                 />
                 <Fab 
@@ -254,12 +254,16 @@ class PortfolioPage extends Component {
                     }}
                   />
                 </Dialog>
-                <Dialog open={this.state.deleteCategory} onClose={this.handleClose}>
+                <Dialog open={this.state.deleteDialog} onClose={this.handleClose}>
                   <DeleteDialog 
-                    name={this.state.manager.getCategory(this.state.category)}
+                    name={this.state.subcategory === 0 ? this.state.manager.getCategory(this.state.category) : this.state.manager.getSubcategoryFrom(this.state.category, this.state.subcategory)}
                     onClose={this.handleClose}
                     onConfirm={async () => {
-                      await this.state.manager.deleteCategory(this.state.manager.getCategory(this.state.category))
+                      if(this.state.subcategory === 0) {
+                        await this.state.manager.deleteCategory(this.state.manager.getCategory(this.state.category));
+                      } else {
+                        await this.state.manager.deleteSubcategory(this.state.manager.getCategory(this.state.category), this.state.manager.getSubcategoryFrom(this.state.category, this.state.subcategory));
+                      }
                     }}
                   />
                 </Dialog>
