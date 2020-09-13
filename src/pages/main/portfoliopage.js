@@ -28,6 +28,22 @@ const _ = require('lodash');
 
 const drawerWidth = 260;
 
+/*
+TODO:
+- Add Category
+- Edit Category
+- Delete Category 
+Add Subcategory (partial implementation)
+Edit Subcategory
+ - Delete Subcategory
+Add Photo
+Edit Photo
+Delete Photo
+Drag and Drop upload photo
+Fullscreen photo viewer
+
+*/ 
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
