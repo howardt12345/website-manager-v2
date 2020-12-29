@@ -3,7 +3,7 @@ import React, { Component, createContext } from "react";
 const MainContext = createContext();
 const { Provider, Consumer } = MainContext;
 
-const pages = ['index', 'portfolio', 'messages'];
+const pages = ['index', 'portfolio', 'photos', 'messages'];
 
 class MainProvider extends Component {
   state = {

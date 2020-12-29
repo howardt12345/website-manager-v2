@@ -1,6 +1,6 @@
 import React from 'react';
 import { MainConsumer, ThemeToggleConsumer } from '@api';
-import { MainPage, PortfolioPage, MessagesPage } from '@pages/main'
+import { MainPage, PortfolioPage, NewPhotosPage, MessagesPage } from '@pages/main'
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from "@material-ui/core/CssBaseline";
 
@@ -19,6 +19,9 @@ function MainRoutes() {
                 case 'portfolio':
                   console.log('portfolio');
                   return (<PortfolioPage />);
+                case 'photos':
+                  console.log('photos');
+                  return (<NewPhotosPage />);
                 case 'messages':
                   console.log('messages');
                   return (<MessagesPage />);

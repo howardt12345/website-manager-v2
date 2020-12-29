@@ -61,7 +61,24 @@ class MainAppBar extends Component {
                       }} 
                       color="inherit"
                     >
-                      Portfolio
+                      Portfolio (Old)
+                    </Link>
+                  </Box>
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography>
+                  <Box fontWeight={ page === 'photos' ? 'fontWeightBold' : 'fontWeightRegular' }>
+                    <Link 
+                      href="#" 
+                      onClick={() => {
+                        if(maincontext.page !== 'photos') {
+                          maincontext.setPage('photos');
+                        }
+                      }} 
+                      color="inherit"
+                    >
+                      Photos
                     </Link>
                   </Box>
                 </Typography>

@@ -81,7 +81,18 @@ class MainPage extends Component {
                     }} 
                     color="inherit"
                   >
-                    Portfolio
+                    Portfolio (Old)
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link 
+                    href="#" 
+                    onClick={() => {
+                      maincontext.setPage('photos');
+                    }} 
+                    color="inherit"
+                  >
+                    Photos
                   </Link>
                 </Grid>
                 <Grid item>
@@ -98,10 +109,6 @@ class MainPage extends Component {
               </Grid>
             )}
           </MainConsumer>
-          <Button onClick={() => {
-            var tmp = moveFirebaseFile('Test5/(Canon EOS 77D) 2020_09_02 20_22_13-Edited (HQ)_.jpg', 'Test6/(Canon EOS 77D) 2020_09_02 20_22_13-Edited (HQ)_.jpg');
-            console.log(tmp);
-          }} >????</Button>
         </Typography>
         <Box className={classes.bottom}>
           <ThemeToggleConsumer>
