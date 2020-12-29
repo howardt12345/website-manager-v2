@@ -83,7 +83,7 @@ export default function Tiles(props) {
       {width
       ? (
         <ImageMasonry 
-          numCols={width/300}
+          numCols={Math.ceil(width/300)}
           containerWidth={'100%'}
           forceOrder={true}
           animate={true}
