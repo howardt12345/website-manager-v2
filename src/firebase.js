@@ -1,9 +1,9 @@
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
-import "firebase/storage";
+import firebase from "@firebase/app";
 import { firebaseConfig } from '@vars';
 import { replaceAll, mergeTypedArrays } from '@utils';
+require("firebase/auth")
+require("firebase/firestore")
+require("firebase/storage")
 
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
 

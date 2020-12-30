@@ -12,10 +12,11 @@ class NewPhotoManager {
   }
 
   addPhoto = async (newPic, newFile) => {
+    this.pictures.push(newPic);
 
-    this.pictures.add(newPic);
+    var data = {};
+    this.pictures.map(pic => data[pic.time] = `"${pic.name}",${pic.width},${pic.height}`);
 
-    var data = new Map(this.pictures.map(pic => [pic.time, `"${pic.name}",${pic.width},${pic.height}`]));
     await firestore.collection("photo")
       .doc("all")
       .set({ 'photos': data })
@@ -31,9 +32,11 @@ class NewPhotoManager {
   }
 
   deletePhoto = async (name) => {
-    this.pictures.remove(this.pictures.find((pic) => pic.name == name));
+    this.pictures = this.pictures.filter((pic, index, arr) => pic.name != name);
     
-    var data = new Map(this.pictures.map(pic => [pic.time, `"${pic.name}",${pic.width},${pic.height}`]));
+    var data = {};
+    this.pictures.map(pic => data[pic.time] = `"${pic.name}",${pic.width},${pic.height}`);
+
     await firestore.collection("photo")
       .doc("all")
       .set({ 'photos': data })
