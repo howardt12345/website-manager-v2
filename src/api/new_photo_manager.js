@@ -20,7 +20,7 @@ class NewPhotoManager {
     await firestore.collection("photo")
       .doc("all")
       .set({ 'photos': data })
-      .catch((error) => console.log(error));
+      .catch((error) => { console.log(error); return false; });
 
     try {
       if(newFile) {
@@ -28,8 +28,21 @@ class NewPhotoManager {
       }
     } catch (e) {
       console.log(e);
+      return false;
     }
+    return true;
   }
+
+  getHeightAndWidthFromDataUrl = dataURL => new Promise(resolve => {
+    const img = new Image()
+    img.onload = () => {
+      resolve({
+        height: img.height,
+        width: img.width
+      })
+    }
+    img.src = dataURL
+  })
 
   deletePhoto = async (name) => {
     this.pictures = this.pictures.filter((pic, index, arr) => pic.name != name);
@@ -51,7 +64,7 @@ class NewPhotoManager {
 }
 
 
-class Picture {
+export class Picture {
   constructor(key, value) {
     this.time = key;
     this.name = value.split('"')[1];

@@ -7,6 +7,7 @@ import {
   Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
   Fab,
   IconButton,
+  Snackbar,
   Toolbar,
   Tooltip,
   Typography,
@@ -17,11 +18,17 @@ import {
   Refresh,
 } from '@material-ui/icons/';
 import { makeStyles } from '@material-ui/core/styles';
-import Gallery from "react-photo-gallery";
+import MuiAlert from '@material-ui/lab/Alert';
 
-import { ImageMasonry, MainAppBar } from '@components';
+import Gallery from "react-photo-gallery";
+import { DropzoneDialog } from 'material-ui-dropzone'
+import uuid from 'react-uuid'
+import EXIF from "exif-js";
+
+import { MainAppBar } from '@components';
 import { PhotoTile } from '@components/portfolio';
-import { fromFirestoreNew, getUrlsFor } from '@api';
+import { fromFirestoreNew, Picture } from '@api';
+import { nearestNormalAspectRatio, replaceAll } from '@utils';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,6 +62,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 class NewPhotosPage extends Component {
   constructor(props) {
@@ -62,6 +72,12 @@ class NewPhotosPage extends Component {
     this.state = {
       loaded: false,
       manager: null,
+      uploadDialog: false,
+      uploading: false,
+      failed: false,
+      snackbar: false,
+      imageDialog: false,
+      imageIndex: 0,
       deleteDialog: false,
       selected: new Set(),
     }
@@ -102,22 +118,12 @@ class NewPhotosPage extends Component {
     });
   }
 
-  imageRenderer = ({index, left, top, key, photo, direction}) => (
-    <PhotoTile 
-      key={key}
-      index={index}
-      photo={photo}
-      left={left}
-      top={top}
-      direction={direction}
-      selected={false}
-      onClick={() => this.singleClick(index)}
-      onDoubleClick={() => this.doubleClick(index)}
-    />
-  )
-
   singleClick = (index) => {
     console.log(`single clicked on ${index}`);
+    this.setState({
+      imageDialog: true,
+      imageIndex: index,
+    });
   }
 
   doubleClick = (index) => {
@@ -137,8 +143,75 @@ class NewPhotosPage extends Component {
     }
   }
 
+  closeSnackbar = () => {
+    this.setState({
+      snackbar: false,
+    });
+  }
+
+
+  async handleSave(files) {
+    this.setState({
+      uploadDialog: false,
+      loading: true,
+      uploading: true,
+    });
+    let file = files[0];
+    let filename = file.name;
+    let manager = this.state.manager;
+
+    let finishLoading = () => this.setState({
+      loading: false,
+      uploading: false,
+      snackbar: true,
+    });
+    let error = () => this.setState({
+      failed: true,
+    });
+    let refresh = this.refresh;
+
+    var fr = new FileReader();
+
+    fr.onload = () => {
+      var img = new Image();
+      img.onload = async () => {
+        var width = img.width;
+        var height = img.height;
+
+        var aspectRatio = nearestNormalAspectRatio(width/height);
+
+        EXIF.getData(file, async function() {
+          var exifData = EXIF.pretty(this);
+          if (exifData) {
+            var rawTime = EXIF.getTag(this, "DateTimeOriginal");
+            var time = replaceAll(rawTime.split(" ")[0], ":", "-") + " " + rawTime.split(" ")[1];
+
+            var ext = filename.substring(filename.lastIndexOf('.')+1, filename.length) || filename;
+
+            var pic = new Picture(time, `"${replaceAll(uuid(), "-", "")}.${ext}",${aspectRatio.width},${aspectRatio.height}`);
+            
+            var uploaded = await manager.addPhoto(pic, file);
+            if(!uploaded) {
+              error();
+            }
+
+            finishLoading();
+            refresh();
+          } else {
+            console.log("No EXIF data found in image '" + file.name + "'.");
+          }
+        });
+      }
+      img.src = fr.result;
+    }
+
+    fr.readAsDataURL(file);
+  }
+
   handleClose = () => {
     this.setState({
+      uploadDialog: false,
+      imageDialog: false,
       deleteDialog: false,
     });
   }
@@ -177,7 +250,7 @@ class NewPhotosPage extends Component {
       <div classes={classes.root}>
         <MainAppBar page='photos'/>
         <div>
-          {this.state.loaded 
+          {this.state.loaded || this.state.uploading
           ? (<main className={classes.content}>
               <Toolbar variant="dense"/>
               <div>
@@ -207,21 +280,66 @@ class NewPhotosPage extends Component {
                   </Tooltip>) : (<div />)}
                 </Box>
                 <Box m={2}/>
-                <Gallery 
+                {this.state.manager.pictures.length !== 0 ? (<Gallery 
                   photos={this.getPhotos()} 
                   direction={"column"}
-                  renderImage={this.imageRenderer}
-                />
+                  renderImage={({index, left, top, key, photo, direction}) => (
+                    <PhotoTile 
+                      key={key}
+                      index={index}
+                      photo={photo}
+                      left={left}
+                      top={top}
+                      direction={direction}
+                      selected={false}
+                      onClick={() => this.singleClick(index)}
+                      onDoubleClick={() => this.doubleClick(index)}
+                    />
+                  )}
+                />) : (<div />)}
               </div>
               <Fab 
                 className={classes.fab}
                 variant="extended"
                 onClick={() => {
+                  this.setState({
+                    uploadDialog: true
+                  });
                 }}
               >
                 <Add className={classes.extendedIcon} />
                 {`Add${this.state.subcategory === 0 ? '...' : ' Photo'}`}
               </Fab>
+              <DropzoneDialog
+                open={this.state.uploadDialog}
+                onSave={this.handleSave.bind(this)}
+                acceptedFiles={['image/*']}
+                showPreviews={true}
+                maxFileSize={500000}
+                filesLimit={1}
+                onClose={this.handleClose.bind(this)}
+              />
+              {this.state.manager.pictures.length !== 0 && (
+                <Dialog
+                  open={this.state.imageDialog} 
+                  onClose={this.handleClose} 
+                  maxWidth={(this.state.manager.pictures[this.state.imageIndex].width
+                    /this.state.manager.pictures[this.state.imageIndex].height) > 1 ? "md" : "sm"}
+                >
+                  <DialogContent>
+                    <img 
+                      src={this.state.manager.pictures[this.state.imageIndex].getUrl()}
+                      alt={this.state.manager.pictures[this.state.imageIndex].getUrl()}
+                      width='100%'
+                    />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={this.handleClose} color="primary">
+                      Close
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+              )}
               <Dialog open={this.state.deleteDialog} onClose={this.handleClose}>
                 <this.DeleteDialog 
                   onClose={this.handleClose}
@@ -239,6 +357,12 @@ class NewPhotosPage extends Component {
                   }}
                 />
               </Dialog>
+
+              <Snackbar open={this.state.snackbar && !this.state.failed} autoHideDuration={3000} onClose={this.closeSnackbar.bind(this)}>
+                <Alert onClose={this.closeSnackbar.bind(this)} severity="success">
+                  Uploaded files successfully.
+                </Alert>
+              </Snackbar>
             </main>
           ) : (
               <div className={classes.paper}>

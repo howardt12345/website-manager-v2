@@ -15,6 +15,10 @@ export const currentTime = () => {
   return `${now.getFullYear()}-${(now.getMonth()+1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})}-${now.getDate().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})} ${now.getHours().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})}:${now.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})}:${now.getSeconds().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})}.${now.getMilliseconds().toLocaleString('en-US', {minimumIntegerDigits: 3, useGrouping:false})}`
 }
 
+export const convertDate = (date) => {
+  return `${date.getFullYear()}-${(date.getMonth()+1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})}-${date.getDate().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})} ${date.getHours().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})}:${date.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})}:${date.getSeconds().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})}.${date.getMilliseconds().toLocaleString('en-US', {minimumIntegerDigits: 3, useGrouping:false})}`
+}
+
 export const filter = (array) => array.filter(function (e) {return !_.isEmpty(e);});
 
 export const mergeTypedArrays = (a, b) => {
@@ -36,4 +40,32 @@ export const mergeTypedArrays = (a, b) => {
   c.set(b, a.length);
 
   return c;
+}
+
+export const nearestNormalAspectRatio = (ratio) => {
+  var bestDelta = Number.MAX_VALUE;
+  var i = 1;
+  var j = 1;
+  var bestI = 0;
+  var bestJ = 0;
+
+  for(var iterations = 0; iterations < 100; iterations++) {
+    var delta = i/j - ratio;
+
+    // Optionally, quit here if delta is "close enough" to zero
+    if (delta < 0) i++;
+    else j++;
+
+    var newDelta = Math.abs((i/j - ratio));
+    if (newDelta < bestDelta) {
+      bestDelta = newDelta;
+      bestI = i;
+      bestJ = j;
+    }
+  }
+
+  return {
+    width: bestI,
+    height: bestJ
+  };
 }
