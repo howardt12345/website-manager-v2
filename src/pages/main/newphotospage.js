@@ -1,9 +1,8 @@
-import React, { Component, useState, useCallback } from 'react';
+import React, { Component } from 'react';
 import { 
   Box,
   Button,
   CircularProgress,
-  CssBaseline,
   Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
   Fab,
   IconButton,

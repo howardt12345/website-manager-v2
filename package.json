@@ -1,11 +1,11 @@
 {
-  "name": "image_updater",
+  "name": "website_manager",
   "version": "0.1.1",
   "private": true,
-  "description": "The client for the Image Updater application.",
+  "description": "The client for the website manager.",
   "author": "Howard Tseng",
   "build": {
-    "appId": "com.howardt12345.image_updater"
+    "appId": "com.howardt12345.website_manager"
   },
   "main": "public/electron.js",
   "homepage": "./",
@@ -65,7 +65,7 @@
   },
   "devDependencies": {
     "electron": "^9.0.3",
-    "electron-builder": "^22.7.0",
+    "electron-builder": "^22.9.1",
     "react-app-rewire-alias": "^0.1.6",
     "react-app-rewired": "^2.1.6"
   }

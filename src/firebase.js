@@ -15,7 +15,7 @@ export const storage = firebase.storage();
 
 const provider = new firebase.auth.GoogleAuthProvider();
 
-const dev = true;
+const dev = false;
 
 export const signInWithGoogle = () => {
   auth.signInWithPopup(provider);
