@@ -267,7 +267,7 @@ class NewPhotosPage extends Component {
                     >
                     <Refresh />
                   </IconButton>
-                  {this.state.selected.size !== 0 ? (<Tooltip title='Delete'>
+                  {this.state.selected.size !== 0 && (<Tooltip title='Delete'>
                     <IconButton
                       className={classes.iconButton}
                       onClick={() => {
@@ -276,10 +276,10 @@ class NewPhotosPage extends Component {
                       >
                       <DeleteForever />
                     </IconButton>
-                  </Tooltip>) : (<div />)}
+                  </Tooltip>)}
                 </Box>
                 <Box m={2}/>
-                {this.state.manager.pictures.length !== 0 ? (<Gallery 
+                {this.state.manager.pictures.length !== 0 && (<Gallery 
                   photos={this.getPhotos()} 
                   direction={"column"}
                   renderImage={({index, left, top, key, photo, direction}) => (
@@ -295,7 +295,7 @@ class NewPhotosPage extends Component {
                       onDoubleClick={() => this.doubleClick(index)}
                     />
                   )}
-                />) : (<div />)}
+                />)}
               </div>
               <Fab 
                 className={classes.fab}
