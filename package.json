@@ -43,10 +43,9 @@
     "react-build": "react-app-rewired build",
     "react-test": "react-app-rewired test",
     "react-eject": "react-scripts eject",
-    "electron-build": "electron-builder",
-    "electron-dev": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && electron .\"",
+    "start": "set BROWSER=none && concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && electron .\"",
     "release": "npm run react-build && electron-builder --publish=always",
-    "build": "npm run react-build && npm run electron-build"
+    "build": "npm run react-build && electron-builder"
   },
   "eslintConfig": {
     "extends": "react-app"

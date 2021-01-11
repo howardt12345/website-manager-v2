@@ -21,9 +21,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 3. Start the development server:
 
    ```sh
-   npm run electron-dev
+   npm start
    ```
-   The program should now be running in a separate electron app!
+   The program should now be running in an electron app!
 
 ## Building a Production build
 
